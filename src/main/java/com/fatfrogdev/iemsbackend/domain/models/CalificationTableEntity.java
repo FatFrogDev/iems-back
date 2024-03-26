@@ -1,7 +1,7 @@
-package com.fatfrogdev.iemsbackend.models;
+package com.fatfrogdev.iemsbackend.domain.models;
 
-import com.fatfrogdev.iemsbackend.models.enumerates.ImagePrecision;
-import com.fatfrogdev.iemsbackend.models.enumerates.SoundStageAmplitude;
+import com.fatfrogdev.iemsbackend.domain.models.enumerates.ImagePrecision;
+import com.fatfrogdev.iemsbackend.domain.models.enumerates.SoundStageAmplitude;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
@@ -27,8 +27,8 @@ public class CalificationTableEntity {
     private ProductEntity product;
 
     @ManyToOne
-    @JoinColumn(name = "person_id", nullable = false)
-    private PersonEntity person;
+    @JoinColumn(name = "client_id", nullable = false)
+    private ClientEntity client;
 
 
     @Column(nullable = false)

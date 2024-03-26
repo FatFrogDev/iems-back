@@ -1,4 +1,4 @@
-package com.fatfrogdev.iemsbackend.models;
+package com.fatfrogdev.iemsbackend.domain.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
@@ -15,7 +15,7 @@ public class ReviewEntity {
 
     @Id
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private PersonEntity person;
+    private ClientEntity client;
 
     @Id
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

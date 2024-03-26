@@ -1,4 +1,4 @@
-package com.fatfrogdev.iemsbackend.models;
+package com.fatfrogdev.iemsbackend.domain.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;

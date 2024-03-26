@@ -1,4 +1,4 @@
-package com.fatfrogdev.iemsbackend.models.enumerates;
+package com.fatfrogdev.iemsbackend.domain.models.enumerates;
 
 public enum SoundStageAmplitude {
     THE_WIDER,

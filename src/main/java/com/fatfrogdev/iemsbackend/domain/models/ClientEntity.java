@@ -1,7 +1,8 @@
-package com.fatfrogdev.iemsbackend.models;
+package com.fatfrogdev.iemsbackend.domain.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UuidGenerator;
 
 @Data
@@ -10,19 +11,19 @@ import org.hibernate.annotations.UuidGenerator;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "people")
-public class PersonEntity {
+@Table(name = "clients")
+public class ClientEntity {
     @Id
     @UuidGenerator
-    private String personId;
+    private String clientId;
 
     private String name;
 
-    private String countryCity;
+    private String countryAndCity;
 
     private int age;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 }
