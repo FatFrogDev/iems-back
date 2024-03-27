@@ -16,8 +16,7 @@ public class CalificationTableDetailsEntity {
 
     @Id
     @UuidGenerator
-    private String calificationTableDetailsEntityId;
-
+    private String calificationTableDetailsId;
 
     @Column(nullable = false)
     private String content;

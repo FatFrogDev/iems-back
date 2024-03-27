@@ -1,7 +1,10 @@
 package com.fatfrogdev.iemsbackend.domain.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Data
@@ -13,17 +16,9 @@ import lombok.*;
 @Table(name = "reviews")
 public class ReviewEntity {
 
-    @Id
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private ClientEntity client;
 
-    @Id
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private ProductEntity product;
-
-    @Id
-    @Column(columnDefinition = "boolean not null default false")
-    private boolean isSecondReview;
+    @EmbeddedId
+    private ReviewId reviewId;
 
     @Column(nullable = false)
     private String content;

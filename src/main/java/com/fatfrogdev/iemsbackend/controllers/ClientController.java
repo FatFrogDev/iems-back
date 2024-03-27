@@ -4,19 +4,17 @@ import com.fatfrogdev.iemsbackend.domain.DTOS.ClientRegisterDTO;
 import com.fatfrogdev.iemsbackend.domain.DTOS.ClientViewDTO;
 import com.fatfrogdev.iemsbackend.services.IClientService;
 import com.fatfrogdev.iemsbackend.services.impl.ClientServiceImpl;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/users")
 public class ClientController   {
     private final  IClientService clientService;
-
-    public ClientController(ClientServiceImpl clientService) {
-        this.clientService = clientService;
-    }
 
     @PostMapping("/save")
     public ResponseEntity<ClientViewDTO> save(@RequestBody ClientRegisterDTO personDTO){
@@ -33,7 +31,8 @@ public class ClientController   {
     @PatchMapping("")
     public ResponseEntity<ClientViewDTO> deactivateByUsername(@RequestParam("username") String username){
         clientService.deleteByUsername(username);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
+
 
 }

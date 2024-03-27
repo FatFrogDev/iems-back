@@ -35,9 +35,9 @@ public class ClientServiceImpl implements IClientService {
     public ClientViewDTO findByUserUsername(String username) {
         if (username.matches("^[a-zA-Z0-9]*$")) {
             Optional<ClientEntity> optionalClientEntity = clientRepository.findByUserUsernameAndUserDeletedIsFalse(username);
-            if (optionalClientEntity.isPresent()) return clientConverter
-                    .entityToViewDto(optionalClientEntity.get());
-            else throw new IllegalArgumentException("User not found");
+                if (optionalClientEntity.isPresent()){
+                    return clientConverter.entityToViewDto(optionalClientEntity.get());
+                }throw new EntityNotFoundException("User not found");
         }throw new IllegalArgumentException("Invalid username format (Alphanumeric only)");
     }
 
@@ -54,9 +54,7 @@ public class ClientServiceImpl implements IClientService {
 
     @Override
     public boolean userIsAlreadyDeleted(String userId){
-        Optional<UserEntity> optionalUserEntity =  userRepository.findByUserIdAndAndDeletedIsTrue(userId);
-        System.out.println(optionalUserEntity);
-        System.out.println("User is already deleted: " + optionalUserEntity.isPresent());
+        Optional<UserEntity> optionalUserEntity = userRepository.findByUserIdAndAndDeletedIsTrue(userId);
         return optionalUserEntity.isPresent();
     }
 }

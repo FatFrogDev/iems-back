@@ -14,7 +14,9 @@ import org.springframework.context.annotation.Conditional;
 @Table(name = "brands")
 public class BrandEntity {
     @Id
+    @Column(nullable = false, length = 35)
     private String brandId;
 
+    @Column(length = 45)
     private String filialOwner;
 }
