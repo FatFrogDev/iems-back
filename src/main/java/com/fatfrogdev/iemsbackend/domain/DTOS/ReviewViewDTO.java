@@ -1,20 +1,24 @@
 package com.fatfrogdev.iemsbackend.domain.DTOS;
 
 import lombok.*;
-import org.hibernate.type.descriptor.jdbc.DecimalJdbcType;
 
 @Data
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewRegisterDTO {
+public class ReviewViewDTO {
 
-    private String title;
+    private String brandId;
 
-    private String productId;
+    private String productName;
 
-    private String userId;
+    private String clientUsername;
+
+    private int reviewNumber;
+
+    private String reviewTitle;
 
     private String content;
 

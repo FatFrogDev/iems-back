@@ -129,3 +129,6 @@ alter table reviews
     add constraint FKrhgcttx2m1rordae4hxfjg25j
         foreign key (person_person_id)
             references people (person_id)
+
+alter table reviews add check (review_number between 0 and 3);
+alter table reviews add check (overall_rating between 0.5 and 5.0);

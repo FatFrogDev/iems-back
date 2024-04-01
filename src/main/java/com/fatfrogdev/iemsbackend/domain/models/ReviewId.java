@@ -1,6 +1,7 @@
 package com.fatfrogdev.iemsbackend.domain.models;
 
 import ch.qos.logback.core.net.server.Client;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -16,17 +17,18 @@ import java.io.Serializable;
 @Embeddable
 public class ReviewId implements Serializable {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id", nullable = false)
     private ClientEntity client;
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="product_id", nullable = false)
     private ProductEntity product;
 
-    @Column(columnDefinition = "int not null default 1")
+
     @Positive(message = "Review number must be greater than 0.")
     @Size(message = "Review number must be between 1 and 3.", min = 1, max = 3)
-    private int reviewNumber;
+    @Column(length = 1, nullable = false)
+    private Integer reviewNumber;
 }
