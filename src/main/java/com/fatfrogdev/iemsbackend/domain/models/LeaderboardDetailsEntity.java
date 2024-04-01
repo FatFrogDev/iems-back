@@ -12,23 +12,23 @@ import org.hibernate.annotations.UuidGenerator;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "califications_tables")
-public class CalificationTableEntity {
+@Table(name = "calification_table_details")
+public class LeaderboardDetailsEntity {
+
     @Id
     @UuidGenerator
-    private String calificationTableId;
+    private String LeaderboardDetailsId;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "calification_table_details_id")
-    private CalificationTableDetailsEntity calificationTableDetailsEntity;
-
-    @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    private ProductEntity product;
+    private LeaderboardEntity leaderboard;
 
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
     private ClientEntity client;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private ProductEntity product;
 
 
     @Column(nullable = false)
@@ -67,14 +67,11 @@ public class CalificationTableEntity {
 
     // private boolean isFatiguing;
 
-    private int videogamesPerformance;
+    private int videoGamesPerformance;
 
     private int buildQuality;
 
     private int comfort;
 
-    private int cable_quality;
-
+    private int cableQuality;
 }
-
-
