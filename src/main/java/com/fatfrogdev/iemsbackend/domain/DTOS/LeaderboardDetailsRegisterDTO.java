@@ -10,8 +10,8 @@ import lombok.*;
 @AllArgsConstructor
 public class LeaderboardDetailsRegisterDTO {
     private String product;
-    private int productTop;
     private String brand;
+    private int productTop;
     private String soundStageAmplitude;
     private String imagePrecision;
     private String subBassQualityQuantity;

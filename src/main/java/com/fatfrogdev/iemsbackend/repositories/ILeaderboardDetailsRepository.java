@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ILeaderboardDetailsRepository extends JpaRepository<LeaderboardDetailsEntity, String> {
-    LeaderboardDetailsEntity findByLeaderboardLeaderboardId(String calificatiocanTableId);
+    LeaderboardDetailsEntity findByLeaderboard_LeaderboardId(String leaderboardTableId);
 }

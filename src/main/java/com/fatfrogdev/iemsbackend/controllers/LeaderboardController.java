@@ -1,4 +1,4 @@
-package com.fatfrogdev.iemsbackend.converters;
+package com.fatfrogdev.iemsbackend.controllers;
 
 import com.fatfrogdev.iemsbackend.domain.DTOS.LeaderboardRegisterDTO;
 import com.fatfrogdev.iemsbackend.services.ILeaderboardService;

@@ -3,11 +3,7 @@ package com.fatfrogdev.iemsbackend.domain.DTOS;
 import com.fatfrogdev.iemsbackend.validators.LeaderboardValidator;
 import lombok.*;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.logging.Logger;
 
 @Data
 @Getter
@@ -18,15 +14,15 @@ public class LeaderboardRegisterDTO {
 
     private final LeaderboardValidator leaderboardValidator;
 
-    private String name;
+    private String name="My Leaderboard";
 
     private String client;
 
-    private List<LeaderboardDetailsRegisterDTO> details;
+    private List<LeaderboardDetailsRegisterDTO> leaderboardDetails;
 
-    public void setDetails(List<LeaderboardDetailsRegisterDTO> details) {
-        if (leaderboardValidator.isSavableDetails(details)){
-            this.details = details;
+    public void setLeaderboardDetails(List<LeaderboardDetailsRegisterDTO> leaderboardDetails) {
+        if (leaderboardValidator.isSavableDetails(leaderboardDetails)){
+            this.leaderboardDetails = leaderboardDetails;
         } else throw  new IllegalArgumentException("Each product top must be unique");
     }
 }

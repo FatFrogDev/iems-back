@@ -14,4 +14,8 @@ public interface IProductRepository extends JpaRepository<ProductEntity, String>
     Optional<List<ProductEntity>> findByNameStartingWith(String prefix);
 
     Optional<List<ProductEntity>> findByNameContaining(String containing);
+
+    boolean existsByProductIdAndBrand_BrandId(String productId, String brandId);
+
+    Optional<ProductEntity> findByProductIdAndBrand_BrandId(String productId, String brandId);
 }
