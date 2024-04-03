@@ -7,6 +7,7 @@ import org.hibernate.annotations.UuidGenerator;
 @Data
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -20,6 +21,7 @@ public class LeaderboardEntity {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id", nullable = false)
     ClientEntity client;
 }
 

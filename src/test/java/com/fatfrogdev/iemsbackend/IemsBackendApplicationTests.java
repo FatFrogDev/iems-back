@@ -1,11 +1,7 @@
 package com.fatfrogdev.iemsbackend;
 
-import com.fatfrogdev.iemsbackend.domain.DTOS.LeaderboardDetailsRegisterDTO;
-import com.fatfrogdev.iemsbackend.domain.DTOS.LeaderboardRegisterDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
 
 @SpringBootTest
 class IemsBackendApplicationTests {

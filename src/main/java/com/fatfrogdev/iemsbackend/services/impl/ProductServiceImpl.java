@@ -1,10 +1,9 @@
 package com.fatfrogdev.iemsbackend.services.impl;
 
 import com.fatfrogdev.iemsbackend.converters.ProductConverter;
-import com.fatfrogdev.iemsbackend.domain.DTOS.ProductDTO;
+import com.fatfrogdev.iemsbackend.domain.DTOS.Product.ProductDTO;
 import com.fatfrogdev.iemsbackend.domain.models.BrandEntity;
 import com.fatfrogdev.iemsbackend.domain.models.ProductEntity;
-import com.fatfrogdev.iemsbackend.repositories.IBrandRepository;
 import com.fatfrogdev.iemsbackend.repositories.IProductRepository;
 import com.fatfrogdev.iemsbackend.services.IBrandService;
 import com.fatfrogdev.iemsbackend.services.IProductService;
@@ -13,7 +12,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service

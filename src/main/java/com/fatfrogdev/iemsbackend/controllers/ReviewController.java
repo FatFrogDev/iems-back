@@ -1,7 +1,7 @@
 package com.fatfrogdev.iemsbackend.controllers;
 
-import com.fatfrogdev.iemsbackend.domain.DTOS.ReviewRegisterDTO;
-import com.fatfrogdev.iemsbackend.domain.DTOS.ReviewViewDTO;
+import com.fatfrogdev.iemsbackend.domain.DTOS.Review.ReviewRegisterDTO;
+import com.fatfrogdev.iemsbackend.domain.DTOS.Review.ReviewViewDTO;
 import com.fatfrogdev.iemsbackend.services.IReviewService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

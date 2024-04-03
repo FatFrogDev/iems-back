@@ -1,6 +1,6 @@
 package com.fatfrogdev.iemsbackend.validators;
 
-import com.fatfrogdev.iemsbackend.domain.DTOS.LeaderboardDetailsRegisterDTO;
+import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardDetailsRegisterDTO;
 import org.springframework.stereotype.Component;
 import com.fatfrogdev.iemsbackend.domain.models.LeaderboardEntity;
 

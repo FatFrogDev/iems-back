@@ -1,6 +1,6 @@
 package com.fatfrogdev.iemsbackend.controllers;
 
-import com.fatfrogdev.iemsbackend.domain.DTOS.ProductDTO;
+import com.fatfrogdev.iemsbackend.domain.DTOS.Product.ProductDTO;
 import com.fatfrogdev.iemsbackend.domain.models.ProductEntity;
 import com.fatfrogdev.iemsbackend.services.IProductService;
 import lombok.AllArgsConstructor;

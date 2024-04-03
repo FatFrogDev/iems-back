@@ -1,9 +1,8 @@
 package com.fatfrogdev.iemsbackend.controllers;
 
-import com.fatfrogdev.iemsbackend.domain.DTOS.ClientRegisterDTO;
-import com.fatfrogdev.iemsbackend.domain.DTOS.ClientViewDTO;
+import com.fatfrogdev.iemsbackend.domain.DTOS.Client.ClientRegisterDTO;
+import com.fatfrogdev.iemsbackend.domain.DTOS.Client.ClientViewDTO;
 import com.fatfrogdev.iemsbackend.services.IClientService;
-import com.fatfrogdev.iemsbackend.services.impl.ClientServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

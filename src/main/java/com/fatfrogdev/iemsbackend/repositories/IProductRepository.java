@@ -1,6 +1,5 @@
 package com.fatfrogdev.iemsbackend.repositories;
 
-import com.fatfrogdev.iemsbackend.domain.models.BrandEntity;
 import com.fatfrogdev.iemsbackend.domain.models.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -17,5 +16,5 @@ public interface IProductRepository extends JpaRepository<ProductEntity, String>
 
     boolean existsByProductIdAndBrand_BrandId(String productId, String brandId);
 
-    Optional<ProductEntity> findByProductIdAndBrand_BrandId(String productId, String brandId);
+    Optional<ProductEntity> findByNameAndBrand_BrandId(String productId, String brandId);
 }

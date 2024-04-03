@@ -9,32 +9,27 @@ import org.hibernate.annotations.UuidGenerator;
 @Data
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "calification_table_details")
+@Table(name = "leaderboards_details")
 public class LeaderboardDetailsEntity {
 
     @Id
     @UuidGenerator
     private String LeaderboardDetailsId;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "leaderboard_id", nullable = false)
     private LeaderboardEntity leaderboard;
-
-    @ManyToOne
-    @JoinColumn(name = "client_id", nullable = false)
-    private ClientEntity client;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private ProductEntity product;
 
-
     @Column(nullable = false)
     private int productTop;
-
-    private String brand;
 
     private SoundStageAmplitude soundStageAmplitude;
 
@@ -65,13 +60,11 @@ public class LeaderboardDetailsEntity {
 
     private boolean isFunny;
 
-    // private boolean isFatiguing;
+    private String videoGamesPerformance;
 
-    private int videoGamesPerformance;
+    private String buildQuality;
 
-    private int buildQuality;
+    private String comfort;
 
-    private int comfort;
-
-    private int cableQuality;
+    private String cableQuality;
 }

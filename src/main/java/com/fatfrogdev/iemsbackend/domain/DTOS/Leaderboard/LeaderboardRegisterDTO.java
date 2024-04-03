@@ -1,4 +1,4 @@
-package com.fatfrogdev.iemsbackend.domain.DTOS;
+package com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard;
 
 import com.fatfrogdev.iemsbackend.validators.LeaderboardValidator;
 import lombok.*;
@@ -14,7 +14,7 @@ public class LeaderboardRegisterDTO {
 
     private final LeaderboardValidator leaderboardValidator;
 
-    private String name="My Leaderboard";
+    private String leaderboardName="My Leaderboard";
 
     private String client;
 

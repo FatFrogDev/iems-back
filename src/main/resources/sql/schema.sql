@@ -132,3 +132,56 @@ alter table reviews
 
 alter table reviews add check (review_number between 0 and 3);
 alter table reviews add check (overall_rating between 0.5 and 5.0);
+
+
+insert into brands values ("blon",null);
+
+insert into brands values ("tripwin", "Linsoul");
+
+insert into products values (uuid(), "Jojo x Z reviews", null, null, "blon");
+
+insert into products values (uuid(), "Piccolo", null, null, "tripwin");
+
+insert into users values(uuid(), false, "arizapaul987@gnail.com", "12345", "fatfrog");
+
+insert into clients values(uuid(), 15, "BOG/COL", "Deyby", "b4131d74-f1e4-11ee-848a-b04f13cfd672");
+
+insert into leaderboards values(uuid(),"My first leaderboard","ee5eb04a-f1e4-11ee-848a-b04f13cfd672");
+
+insert into leaderboards_details values(uuid(), "8/7", 10, 10, 10, 1 /* EQUALS TO = "very precise"*/, 1, 1, "8/7","8/7", "6/8", 1, "8", 1/* EQUALS TO = "very wide"*/, "8/7", "8/7", 10, "ee5eb04a-f1e4-11ee-848a-b04f13cfd672", "f5b1fc7c-f1e6-11ee-848a-b04f13cfd672", "8e218d97-f1e4-11ee-848a-b04f13cfd672");
+
+insert into leaderboards_details values(uuid(), "8/7", 10, 10, 10, 1 /* EQUALS TO = "very precise"*/, 1, 1, "8/7","8/7", "6/8", 1, "8", 1/* EQUALS TO = "very wide"*/, "8/7", "8/7", 10, "ee5eb04a-f1e4-11ee-848a-b04f13cfd672", "f5b1fc7c-f1e6-11ee-848a-b04f13cfd672", "926c928e-f1e9-11ee-848a-b04f13cfd672");
+
+delimiter //
+create procedure find_leaderboard_by_id_and_order(in in_leaderboard_id varchar(255), in in_custom_order varchar(4))
+begin
+select lbd.leaderboard_id leaderboardId, lbd.name leaderboardName, -- leaderboard info
+       users.username clientUsername,/* TODO: Client Username ??? */
+       product.product_id, product.name productName, product.brand_id productBrand,-- product details
+       lbd_dtls.bass_quality_quantity bassQualityQuantity, lbd_dtls.build_quality buildQuality, -- leaderboard_details info
+       lbd_dtls.cable_quality cableQuality, lbd_dtls.comfort comfort, lbd_dtls.image_precision imagePrecision,
+
+       lbd_dtls.is_bass_head isBassHead, lbd_dtls.is_funny isFunny,
+       lbd_dtls.medium_bass_quality_quantity mediumBassQualityQuantity, lbd_dtls.mid_range_quality_quantity midRangeQualityQuantity,
+       lbd_dtls.monitoring_live_studio monitoringLiveStudio, lbd_dtls.product_top productTop,
+       lbd_dtls.sibilance_control sibilanceControl, lbd_dtls.sound_stage_amplitude soundStageAmplitude,
+       lbd_dtls.sub_bass_quality_quantity subBassQualityQuantity,
+       lbd_dtls.video_games_performance videoGamesPerformance
+
+from leaderboards_details lbd_dtls
+         inner join leaderboards lbd on lbd_dtls.leaderboard_id = lbd.leaderboard_id
+         inner join products product on lbd_dtls.product_id=product.product_id
+         inner join clients clients on lbd.client_id = clients.client_id
+         inner join users users on clients.user_id = users.user_id
+
+where lbd_dtls.leaderboard_id=in_leaderboard_id
+order by
+    case
+        when in_custom_order is null or in_custom_order='asc'
+            then lbd_dtls.product_top end asc,
+    case
+        when in_custom_order='desc'
+            then lbd_dtls.product_top end desc;
+end  //
+
+delimiter ;

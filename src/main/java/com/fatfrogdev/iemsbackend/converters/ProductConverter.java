@@ -1,6 +1,6 @@
 package com.fatfrogdev.iemsbackend.converters;
 
-import com.fatfrogdev.iemsbackend.domain.DTOS.ProductDTO;
+import com.fatfrogdev.iemsbackend.domain.DTOS.Product.ProductDTO;
 import com.fatfrogdev.iemsbackend.domain.models.ProductEntity;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;

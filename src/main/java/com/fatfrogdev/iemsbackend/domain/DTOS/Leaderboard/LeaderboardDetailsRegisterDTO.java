@@ -1,5 +1,7 @@
-package com.fatfrogdev.iemsbackend.domain.DTOS;
+package com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard;
 
+import com.fatfrogdev.iemsbackend.domain.models.enumerates.ImagePrecision;
+import com.fatfrogdev.iemsbackend.domain.models.enumerates.SoundStageAmplitude;
 import lombok.*;
 
 @Data
@@ -12,8 +14,8 @@ public class LeaderboardDetailsRegisterDTO {
     private String product;
     private String brand;
     private int productTop;
-    private String soundStageAmplitude;
-    private String imagePrecision;
+    private SoundStageAmplitude soundStageAmplitude;
+    private ImagePrecision imagePrecision;
     private String subBassQualityQuantity;
     private String bassQualityQuantity;
     private String mediumBassQualityQuantity;
@@ -23,8 +25,8 @@ public class LeaderboardDetailsRegisterDTO {
     private boolean isBassHead;
     private String monitoringLiveStudio;
     private boolean isFunny;
-    private int videoGamesPerformance;
-    private int buildQuality;
-    private int comfort;
-    private int cableQuality;
+    private String videoGamesPerformance;
+    private String buildQuality;
+    private String comfort;
+    private String cableQuality;
 }

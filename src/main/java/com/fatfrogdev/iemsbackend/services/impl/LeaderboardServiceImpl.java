@@ -1,14 +1,15 @@
 package com.fatfrogdev.iemsbackend.services.impl;
 
 import com.fatfrogdev.iemsbackend.converters.LeaderboardConverter;
-import com.fatfrogdev.iemsbackend.domain.DTOS.LeaderboardDetailsRegisterDTO;
-import com.fatfrogdev.iemsbackend.domain.DTOS.LeaderboardRegisterDTO;
-import com.fatfrogdev.iemsbackend.domain.DTOS.LeaderboardViewDTO;
+import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardDetailsRegisterDTO;
+import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardRegisterDTO;
+import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardViewDTO;
 import com.fatfrogdev.iemsbackend.domain.models.ClientEntity;
 import com.fatfrogdev.iemsbackend.domain.models.LeaderboardDetailsEntity;
 import com.fatfrogdev.iemsbackend.domain.models.LeaderboardEntity;
 import com.fatfrogdev.iemsbackend.domain.models.ProductEntity;
 import com.fatfrogdev.iemsbackend.repositories.IClientRepository;
+import com.fatfrogdev.iemsbackend.repositories.ILeaderboardDetailsRepository;
 import com.fatfrogdev.iemsbackend.repositories.ILeaderboardRepository;
 import com.fatfrogdev.iemsbackend.repositories.IProductRepository;
 import com.fatfrogdev.iemsbackend.services.ILeaderboardService;
@@ -17,8 +18,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 @AllArgsConstructor
@@ -26,6 +27,8 @@ import java.util.Optional;
 public class LeaderboardServiceImpl implements ILeaderboardService {
 
     private final ILeaderboardRepository leaderboardRepository;
+
+    private final ILeaderboardDetailsRepository leaderboardDetailsRepository;
 
     private final LeaderboardValidator leaderboardValidator;
 
@@ -35,67 +38,70 @@ public class LeaderboardServiceImpl implements ILeaderboardService {
 
     private final LeaderboardConverter leaderboardConverter;
 
+
     @Override
-    public LeaderboardViewDTO saveLeaderboardDetailsCollection(LeaderboardEntity leaderboardEntity, List<LeaderboardDetailsEntity> leaderboardDetailsEntityList) {
-        //For to set the leaderboard details entity
-        for (int index = 0; index < leaderboardDetailsEntityList.size(); index++) {
-            LeaderboardDetailsEntity leaderboardDetailsEntity = leaderboardDetailsEntityList.get(index);
-            leaderboardDetailsEntity.setLeaderboard(leaderboardEntity);
-            // TODO: Save the list of details entity
-        }
-        // ;//TODO: DO NOT SAVE HERE
-        return null;
+    public List<LeaderboardViewDTO> saveLeaderboard(LeaderboardRegisterDTO leaderboardRegisterDTO) {
+        LeaderboardEntity leaderboardEntity = saveLeaderboardEntity(leaderboardRegisterDTO);
+        saveLeaderboardDetailsCollection(leaderboardRegisterDTO, leaderboardEntity);
+        System.out.println("Leaderboard saved successfully" + leaderboardEntity);
+        return findById(leaderboardEntity.getLeaderboardId(), null);
     }
 
     @Override
-    public LeaderboardEntity saveLeadearboardEntity(LeaderboardRegisterDTO leaderboardRegisterDTO) {
-        return null; //TODO: Implement method
-    }
+    public void saveLeaderboardDetailsCollection(LeaderboardRegisterDTO leaderboardRegisterDTO, LeaderboardEntity leaderboardEntity){
 
-    public LeaderboardDetailsEntity setLeaderboardDetailsEntity (LeaderboardRegisterDTO leaderboardRegisterDTO) {
-        LeaderboardEntity leaderboardEntity = setLeaderboardEntity(leaderboardRegisterDTO);
-        LeaderboardDetailsEntity leaderboardDetailsEntity = new LeaderboardDetailsEntity();
+        List<LeaderboardDetailsEntity> leaderboardDetailsEntityList = new ArrayList<>();
 
-        leaderboardDetailsEntity.setLeaderboard(leaderboardEntity);
-
-        // LeaderboardDetailsEntity leaderboardDetailsEntity = null; //TODO: Add converter with products.
-
-        return null;
-    }
+        for (int index = 0; index < leaderboardRegisterDTO.getLeaderboardDetails().size(); index++) {
 
 
-    private LeaderboardEntity setLeaderboardEntity(LeaderboardRegisterDTO leaderboardRegisterDTO) {
-
-        ClientEntity clientEntity = isSettableClient(leaderboardRegisterDTO.getClient());
-        LeaderboardEntity leaderboardEntity = new LeaderboardEntity();
-
-        leaderboardEntity.setClient(clientEntity);
-        leaderboardEntity.setName(leaderboardRegisterDTO.getName()); // It is assumed that at this point the leaderboard name is not null.
-
-        return leaderboardEntity;
-    }
+            ProductEntity productEntity = findProductEntityByNameAndBrand(
+                    leaderboardRegisterDTO.getLeaderboardDetails().get(index).getProduct(),
+                    leaderboardRegisterDTO.getLeaderboardDetails().get(index).getBrand()
+            );
 
 
-    private List<LeaderboardDetailsEntity> setProducts(List<LeaderboardDetailsRegisterDTO> leaderboardDetailsRegisterDTORegisterDTO){
-        List<LeaderboardDetailsEntity> leaderboardDetailsEntityList = setLeaderboardDetailsEntity(leaderboardDetailsRegisterDTORegisterDTO.ge);
-        for (int index = 0; index < leaderboardDetailsRegisterDTORegisterDTO.size(); index++) {
-            LeaderboardDetailsRegisterDTO leaderboardDetailsRegisterDTO = leaderboardDetailsRegisterDTORegisterDTO.get(index);
-            Optional<ProductEntity> optionalProduct = productRepository
-                    .findByProductIdAndBrand_BrandId(   leaderboardDetailsRegisterDTO.getProduct(),
-                                                        leaderboardDetailsRegisterDTO.getBrand() );
-
-            if (optionalProduct.isPresent()){
-                leaderboardDetailsEntityList.add()
-            }
+            leaderboardDetailsEntityList.add(
+                            clusterLeaderboardDetailsEntity(
+                                    leaderboardRegisterDTO.getLeaderboardDetails().get(index),
+                                    leaderboardEntity,
+                                    leaderboardEntity.getClient(),
+                                    productEntity
+                    )
+            );
         }
-
-        return null;
+        //TODO:  validations to assert that list is not null.
+        if (leaderboardDetailsEntityList.size()==leaderboardRegisterDTO.getLeaderboardDetails().size()) {
+            System.out.println("saving all details entities");
+            leaderboardDetailsRepository.saveAll(leaderboardDetailsEntityList);
+        }
+        else throw new IllegalArgumentException("Leaderboard details list is not the same size as the DTO list");
     }
 
-    private ClientEntity isSettableClient(String clientUserUsername){
-        Optional<ClientEntity> optionalClient = clientRepository.findByUserUsernameAndUserDeletedIsFalse(clientUserUsername);
-        if (optionalClient.isPresent()){
-            return optionalClient.get();
-        } throw new EntityNotFoundException("Client with username " + clientUserUsername + " not found");
+    @Override
+    public List<LeaderboardViewDTO> findById(String leaderboardId, String customOrder) {
+        customOrder = customOrder== null ? "asc" : customOrder;
+        return leaderboardRepository.findLeaderboardByIdAndOrder(leaderboardId, customOrder).orElseThrow(EntityNotFoundException::new);
+    }
+
+    private LeaderboardDetailsEntity clusterLeaderboardDetailsEntity(LeaderboardDetailsRegisterDTO leaderboardDetailsRegisterDTO, LeaderboardEntity leaderboardEntity, ClientEntity clientEntity, ProductEntity productEntity) {
+        return leaderboardConverter.DetailsRegisterDtoToDetailsEntity(leaderboardDetailsRegisterDTO, leaderboardEntity, clientEntity, productEntity);
+    }
+
+    private LeaderboardEntity saveLeaderboardEntity(LeaderboardRegisterDTO leaderboardRegisterDTO) { //TODO? Refactor to add personalized exception
+        ClientEntity clientEntity = findClientEntityByUserUsername(leaderboardRegisterDTO.getClient());
+        LeaderboardEntity leaderboardEntity = leaderboardConverter.registerDtoToLeaderboardEntity(leaderboardRegisterDTO, clientEntity);
+        return leaderboardRepository.save(leaderboardEntity);
+    }
+
+
+
+    private ClientEntity findClientEntityByUserUsername(String clientUsername) {
+        return clientRepository.findByUserUsernameAndUserDeletedIsFalse(clientUsername).orElseThrow(EntityNotFoundException::new);
+    }
+
+    private ProductEntity findProductEntityByNameAndBrand(String productName, String productBrand) {
+        System.out.println("Finding: " + productBrand + " " + productName + " " + "...");
+        return productRepository.findByNameAndBrand_BrandId(productName,productBrand).orElseThrow(EntityNotFoundException::new);
     }
 }

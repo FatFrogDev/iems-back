@@ -1,8 +1,8 @@
 package com.fatfrogdev.iemsbackend.services.impl;
 
 import com.fatfrogdev.iemsbackend.converters.ClientConverter;
-import com.fatfrogdev.iemsbackend.domain.DTOS.ClientRegisterDTO;
-import com.fatfrogdev.iemsbackend.domain.DTOS.ClientViewDTO;
+import com.fatfrogdev.iemsbackend.domain.DTOS.Client.ClientRegisterDTO;
+import com.fatfrogdev.iemsbackend.domain.DTOS.Client.ClientViewDTO;
 import com.fatfrogdev.iemsbackend.domain.models.ClientEntity;
 import com.fatfrogdev.iemsbackend.domain.models.UserEntity;
 import com.fatfrogdev.iemsbackend.repositories.IClientRepository;

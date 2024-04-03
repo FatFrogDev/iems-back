@@ -1,12 +1,11 @@
 package com.fatfrogdev.iemsbackend.services.impl;
 
 import com.fatfrogdev.iemsbackend.converters.ReviewConverter;
-import com.fatfrogdev.iemsbackend.domain.DTOS.ReviewRegisterDTO;
-import com.fatfrogdev.iemsbackend.domain.DTOS.ReviewViewDTO;
+import com.fatfrogdev.iemsbackend.domain.DTOS.Review.ReviewRegisterDTO;
+import com.fatfrogdev.iemsbackend.domain.DTOS.Review.ReviewViewDTO;
 import com.fatfrogdev.iemsbackend.domain.models.ClientEntity;
 import com.fatfrogdev.iemsbackend.domain.models.ProductEntity;
 import com.fatfrogdev.iemsbackend.domain.models.ReviewEntity;
-import com.fatfrogdev.iemsbackend.domain.models.ReviewId;
 import com.fatfrogdev.iemsbackend.repositories.IClientRepository;
 import com.fatfrogdev.iemsbackend.repositories.IProductRepository;
 import com.fatfrogdev.iemsbackend.repositories.IReviewRepository;
@@ -14,7 +13,6 @@ import com.fatfrogdev.iemsbackend.services.IReviewService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 

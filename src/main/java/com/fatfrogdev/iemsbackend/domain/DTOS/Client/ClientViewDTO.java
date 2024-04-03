@@ -1,4 +1,4 @@
-package com.fatfrogdev.iemsbackend.domain.DTOS;
+package com.fatfrogdev.iemsbackend.domain.DTOS.Client;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

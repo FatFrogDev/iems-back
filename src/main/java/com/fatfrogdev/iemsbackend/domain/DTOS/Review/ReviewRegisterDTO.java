@@ -1,4 +1,4 @@
-package com.fatfrogdev.iemsbackend.domain.DTOS;
+package com.fatfrogdev.iemsbackend.domain.DTOS.Review;
 
 import lombok.*;
 import org.hibernate.type.descriptor.jdbc.DecimalJdbcType;
