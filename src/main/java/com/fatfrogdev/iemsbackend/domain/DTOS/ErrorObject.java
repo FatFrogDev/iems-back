@@ -13,6 +13,7 @@ public class ErrorObject {
         private String timestamp;
         private String description;
         private String exception;
+        private Object[] errors;
 }
 
 

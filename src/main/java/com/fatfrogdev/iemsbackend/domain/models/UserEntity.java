@@ -25,8 +25,8 @@ public class UserEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Size(min = 7, max = 12, message = "Password must be between 7 and 12 characters.")
-    @Column(nullable = false, length = 12)
+    @Size(min = 7, max = 255, message = "Password must be between 7 and 12 characters.")
+    @Column(nullable = false)
     private String password;
 
     @Size(min = 3, max = 25, message = "Username must be between 3 and 50 characters.")

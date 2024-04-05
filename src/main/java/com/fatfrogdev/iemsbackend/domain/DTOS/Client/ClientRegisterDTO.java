@@ -12,7 +12,7 @@ public class ClientRegisterDTO {
 
     private String name;
 
-    private String countryAndCity;
+    private String country;
 
     private int age;
 

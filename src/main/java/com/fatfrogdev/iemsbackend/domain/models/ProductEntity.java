@@ -10,6 +10,7 @@ import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
 @Data
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor

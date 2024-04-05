@@ -34,9 +34,9 @@ public class ClientServiceImpl implements IClientService {
     @Override
     public ClientViewDTO findByUserUsername(String username) {
         if (username.matches("^[a-zA-Z0-9]*$")) {
-            Optional<ClientEntity> optionalClientEntity = clientRepository.findByUserUsernameAndUserDeletedIsFalse(username);
-                if (optionalClientEntity.isPresent()){
-                    return clientConverter.entityToViewDto(optionalClientEntity.get());
+            Optional<ClientEntity> optClientEntity = clientRepository.findByUserUsernameAndUserDeletedIsFalse(username);
+                if (optClientEntity.isPresent()){
+                    return clientConverter.entityToViewDto(optClientEntity.get());
                 }throw new EntityNotFoundException("User not found");
         }throw new IllegalArgumentException("Invalid username format (Alphanumeric only)");
     }
@@ -45,16 +45,16 @@ public class ClientServiceImpl implements IClientService {
     @Override
     public void deleteByUsername(String username) {
         if (username!=null){
-            UserEntity optionalUserEntity = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
-                if (!userIsAlreadyDeleted(optionalUserEntity.getUserId())){                // TODO: Add generic validation for id null and user is already deleted
-                    userRepository.deleteByUserId(optionalUserEntity.getUserId());
+            UserEntity optlUserEntity = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+                if (!userIsAlreadyDeleted(optlUserEntity.getUserId())){                // TODO: Add generic validation for id null and user is already deleted
+                    userRepository.deleteByUserId(optlUserEntity.getUserId());
                 } else throw new IllegalArgumentException("User is already deleted");
         } else throw new IllegalArgumentException("Error getting the user id");
     }
 
     @Override
     public boolean userIsAlreadyDeleted(String userId){
-        Optional<UserEntity> optionalUserEntity = userRepository.findByUserIdAndAndDeletedIsTrue(userId);
-        return optionalUserEntity.isPresent();
+        Optional<UserEntity> optUserEntity = userRepository.findByUserIdAndAndDeletedIsTrue(userId);
+        return optUserEntity.isPresent();
     }
 }

@@ -27,8 +27,8 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public ProductDTO save(ProductDTO productDTO) { //TODO: add product DTO or DTOS
         ProductEntity productEntity = productConverter.registerDtoToEntity(productDTO);
-        BrandEntity optionalBrandEntity = brandService.findById(productDTO.getBrand());
-        productEntity.setBrand(optionalBrandEntity);
+        BrandEntity optBrandEntity = brandService.findById(productDTO.getBrand());
+        productEntity.setBrand(optBrandEntity);
         return productConverter.entityToDto(productRepository.save(productEntity));
     }
 

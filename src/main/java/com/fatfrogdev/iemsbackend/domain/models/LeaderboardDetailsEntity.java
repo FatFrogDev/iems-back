@@ -31,8 +31,10 @@ public class LeaderboardDetailsEntity {
     @Column(nullable = false)
     private int productTop;
 
+    @Column(nullable = false)
     private SoundStageAmplitude soundStageAmplitude;
 
+    @Column(nullable = false)
     private ImagePrecision imagePrecision;
 
     @Column(length = 5)

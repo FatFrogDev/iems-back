@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class ClientViewDTO {
 
     private String name;
-    private String countryAndCity;
+    private String country;
     private int age;
     private String email;
     private String username;
