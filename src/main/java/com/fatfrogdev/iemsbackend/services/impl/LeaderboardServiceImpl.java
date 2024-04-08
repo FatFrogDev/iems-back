@@ -13,6 +13,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 @AllArgsConstructor
 @Service
@@ -36,14 +38,19 @@ public class LeaderboardServiceImpl implements ILeaderboardService {
 
 
     private LeaderboardEntity saveLeaderboardEntity(LeaderboardRegisterDTO leaderboardRegisterDTO) { //TODO? Refactor to add personalized exception
-        ClientEntity clientEntity = findClientEntityByUserUsername(leaderboardRegisterDTO.getClient());
-        LeaderboardEntity leaderboardEntity = leaderboardConverter.registerDtoToLeaderboardEntity(leaderboardRegisterDTO, clientEntity);
-        return leaderboardRepository.save(leaderboardEntity);
+
+        Optional<String> optClientUsername = findClientByUsername(leaderboardRegisterDTO.getClient());
+
+        if (optClientUsername.isPresent()) { // TODO: Add validation for client deleted not able to save a leaderboard.
+            LeaderboardEntity leaderboardEntity = leaderboardConverter.registerDtoToLeaderboardEntity(leaderboardRegisterDTO, new ClientEntity(optClientUsername.get()));
+            return leaderboardRepository.save(leaderboardEntity);
+        }
+        throw new EntityNotFoundException("Client with username " +  leaderboardRegisterDTO.getLeaderboardDetails() + " not found");
     }
 
 
-    private ClientEntity findClientEntityByUserUsername(String clientUsername) {
-        return clientRepository.findByUserUsernameAndUserDeletedIsFalse(clientUsername).orElseThrow(EntityNotFoundException::new);
+    private Optional<String> findClientByUsername(String clientUsername) {
+        return clientRepository.findClientEntityByClientUserUsername(clientUsername);
     }
 
 }

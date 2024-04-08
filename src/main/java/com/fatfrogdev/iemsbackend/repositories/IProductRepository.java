@@ -20,6 +20,6 @@ public interface IProductRepository extends JpaRepository<ProductEntity, String>
 
     Optional<ProductEntity> findByNameAndBrand_BrandId(String productId, String brandId);
 
-    @Query("SELECT pdt.productId FROM ProductEntity pdt WHERE pdt.name=:productname AND pdt.brand.brandId =:product_brand")
+    @Query("SELECT pdt.productId FROM ProductEntity pdt WHERE pdt.name=:product_name AND pdt.brand.brandId =:product_brand")
     Optional<String> findProductIdByProductNameAndProductBrand(@Param("product_name") String productName, @Param("product_brand") String productBrand);
 }

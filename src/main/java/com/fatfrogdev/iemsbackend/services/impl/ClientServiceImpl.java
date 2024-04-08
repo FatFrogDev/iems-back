@@ -25,7 +25,7 @@ public class ClientServiceImpl implements IClientService {
     private final ClientConverter clientConverter;
 
     @Override
-    public ClientViewDTO save(ClientRegisterDTO personDTO) {
+    public ClientViewDTO save(ClientRegisterDTO personDTO) { // TODO: Add validations for client already registered and deleted user.
         ClientEntity clientEntity = clientConverter.registerDtoToEntity(personDTO);
         return clientConverter
                 .entityToViewDto(clientRepository.save(clientEntity));

@@ -1,5 +1,6 @@
 package com.fatfrogdev.iemsbackend.domain.models;
 
+import ch.qos.logback.core.net.server.Client;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
@@ -25,4 +26,8 @@ public class ClientEntity {
     @OneToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
+
+    public ClientEntity(String clientId){
+        this.clientId = clientId;
+    }
 }

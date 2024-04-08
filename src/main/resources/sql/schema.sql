@@ -449,12 +449,9 @@ UNLOCK TABLES;
 /*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `find_leaderboard_by_id_and_order`(in in_leaderboard_id varchar(255), in in_custom_order varchar(4))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `find_leaderboard_details`(in in_leaderboard_id varchar(255), in in_custom_order varchar(4))
 begin
-select lbd.leaderboard_id leaderboardId, lbd.name leaderboardName, -- leaderboard info
-       users.username clientUsername,/* TODO: Client Username ??? */
-       product.product_id productId, product.name productName, product.brand_id productBrand,-- product details
+select product.product_id productId, product.name productName, product.brand_id productBrand,-- product details
        lbd_dtls.bass_quality_quantity bassQualityQuantity, lbd_dtls.build_quality buildQuality, -- leaderboard_details info
        lbd_dtls.cable_quality cableQuality, lbd_dtls.comfort comfort, lbd_dtls.image_precision imagePrecision,
 
@@ -468,9 +465,6 @@ select lbd.leaderboard_id leaderboardId, lbd.name leaderboardName, -- leaderboar
 from leaderboards_details lbd_dtls
          inner join leaderboards lbd on lbd_dtls.leaderboard_id = lbd.leaderboard_id
          inner join products product on lbd_dtls.product_id=product.product_id
-         inner join clients clients on lbd.client_id = clients.client_id
-         inner join users users on clients.user_id = users.user_id
-
 where lbd_dtls.leaderboard_id=in_leaderboard_id
 order by
     case
@@ -479,8 +473,7 @@ order by
     case
         when in_custom_order='desc'
             then lbd_dtls.product_top end desc;
-end ;;
-DELIMITER ;
+end
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
