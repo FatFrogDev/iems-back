@@ -12,7 +12,10 @@ import java.util.Optional;
 public interface IClientRepository extends JpaRepository<ClientEntity, String> {
 
     @Query("SELECT c.clientId FROM ClientEntity c WHERE c.user.username = :clientUsername and c.user.deleted = false")
-    Optional<String> findClientEntityByClientUserUsername(String clientUsername);
+    Optional<String> findClientIdByUserUsername(String clientUsername);
 
     Optional<ClientEntity> findByUserUsernameAndUserDeletedIsFalse(String username);
+
+    @Query("SELECT u.userId FROM ClientEntity c JOIN c.user u WHERE c.user.username = :clientUsername and c.user.deleted = false")
+    Optional<String> findUserIdByUserUsername(String clientUsername);
 }

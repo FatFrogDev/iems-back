@@ -30,4 +30,9 @@ public class ClientEntity {
     public ClientEntity(String clientId){
         this.clientId = clientId;
     }
+
+    public ClientEntity(String clientId, UserEntity userEntity) {
+        this.clientId = clientId;
+        this.user = userEntity;
+    }
 }

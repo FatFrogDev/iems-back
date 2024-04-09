@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @Getter
 @Setter
@@ -15,7 +17,6 @@ public class ReviewEntity {
 
     @EmbeddedId
     private ReviewId reviewId;
-
 
     @NotBlank(message = "Review title is required.")
     @Column(nullable = false, length = 45)
@@ -40,4 +41,6 @@ public class ReviewEntity {
     @Size(max = 200, message = "Overview must be less than 200 characters.")
     @Column(length = 200)
     private String contras;
+
+    private List<String> images;
 }

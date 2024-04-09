@@ -1,10 +1,12 @@
 package com.fatfrogdev.iemsbackend.services.impl;
 
+import ch.qos.logback.core.net.server.Client;
 import com.fatfrogdev.iemsbackend.converters.LeaderboardConverter;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardRegisterDTO;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardViewDTO;
 import com.fatfrogdev.iemsbackend.domain.models.ClientEntity;
 import com.fatfrogdev.iemsbackend.domain.models.LeaderboardEntity;
+import com.fatfrogdev.iemsbackend.domain.models.UserEntity;
 import com.fatfrogdev.iemsbackend.repositories.IClientRepository;
 import com.fatfrogdev.iemsbackend.repositories.ILeaderboardRepository;
 import com.fatfrogdev.iemsbackend.services.ILeaderboardDetailsService;
@@ -39,18 +41,28 @@ public class LeaderboardServiceImpl implements ILeaderboardService {
 
     private LeaderboardEntity saveLeaderboardEntity(LeaderboardRegisterDTO leaderboardRegisterDTO) { //TODO? Refactor to add personalized exception
 
-        Optional<String> optClientUsername = findClientByUsername(leaderboardRegisterDTO.getClient());
+        Optional<String> optClientId = findClientIdByUsername(leaderboardRegisterDTO.getClientUsername());
+        Optional<String> optUserId = findUserIdByUsername(leaderboardRegisterDTO.getClientUsername());
 
-        if (optClientUsername.isPresent()) { // TODO: Add validation for client deleted not able to save a leaderboard.
-            LeaderboardEntity leaderboardEntity = leaderboardConverter.registerDtoToLeaderboardEntity(leaderboardRegisterDTO, new ClientEntity(optClientUsername.get()));
-            return leaderboardRepository.save(leaderboardEntity);
+        if (optClientId.isPresent()) { // TODO: Add validation for client deleted not able to save a leaderboard.
+            if (optUserId.isPresent()) {
+                ClientEntity clientEntity = new ClientEntity(optClientId.get(),
+                                            new UserEntity(optUserId.get(),
+                                            leaderboardRegisterDTO.getClientUsername()));
+                LeaderboardEntity leaderboardEntity = leaderboardConverter.registerDtoToLeaderboardEntity(leaderboardRegisterDTO, clientEntity);
+                return leaderboardRepository.save(leaderboardEntity);
+            }
+            throw new EntityNotFoundException("User " + leaderboardRegisterDTO.getLeaderboardDetails() + " not found");
         }
         throw new EntityNotFoundException("Client with username " +  leaderboardRegisterDTO.getLeaderboardDetails() + " not found");
     }
 
 
-    private Optional<String> findClientByUsername(String clientUsername) {
-        return clientRepository.findClientEntityByClientUserUsername(clientUsername);
+    private Optional<String> findClientIdByUsername(String clientUsername) {
+        return clientRepository.findClientIdByUserUsername(clientUsername);
     }
 
+    private Optional<String> findUserIdByUsername(String clientUsername) {
+        return clientRepository.findUserIdByUserUsername(clientUsername);
+    }
 }

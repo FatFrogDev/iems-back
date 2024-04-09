@@ -38,10 +38,15 @@ public class UserEntity {
     @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean deleted;
 
-    public UserEntity(String email, String password, String username){
+    public UserEntity(String email, String password, String username) {
         this.email = email;
         this.password = password;
         this.username = username;
 
+    }
+
+    public UserEntity(String userId, String username) {
+        this.userId = userId;
+        this.username = username;
     }
 }
