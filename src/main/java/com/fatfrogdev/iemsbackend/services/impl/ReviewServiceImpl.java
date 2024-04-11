@@ -10,8 +10,10 @@ import com.fatfrogdev.iemsbackend.repositories.IClientRepository;
 import com.fatfrogdev.iemsbackend.repositories.IProductRepository;
 import com.fatfrogdev.iemsbackend.repositories.IReviewRepository;
 import com.fatfrogdev.iemsbackend.services.IReviewService;
+import com.fatfrogdev.iemsbackend.services.IUploadFileService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,14 +30,17 @@ public class ReviewServiceImpl implements IReviewService {
 
     private final IClientRepository clientRepository;
 
+    private final IUploadFileService uploadFileService;
+
     @Override
-    public ReviewViewDTO save(ReviewRegisterDTO reviewRegisterDTO) {
+    public ReviewViewDTO save(ReviewRegisterDTO reviewRegisterDTO, List<MultipartFile> files) {
         ReviewEntity reviewEntity = buildEntity(reviewRegisterDTO);
-        System.out.println("ReviewEntity: " + reviewEntity);
         if (reviewEntity!=null)
+
+
+
             return reviewConverter.entityToViewDto(
-                    reviewRepository.save(reviewEntity
-                    )
+                    reviewRepository.save(reviewEntity)
             );
         else throw new RuntimeException("Error while saving the review.");
     }
@@ -56,8 +61,7 @@ public class ReviewServiceImpl implements IReviewService {
     private Integer getReviewNumber(String productId, String clientId){
         List<Integer> reviewNumberFound =  reviewRepository.findReviewNumber(productId,clientId);
         if(!reviewNumberFound.isEmpty()) {
-            reviewNumberFound.forEach(System.out::println);
-            return  reviewNumberFound.get(0) + 1;
         }return 1;
     }
+
 }
