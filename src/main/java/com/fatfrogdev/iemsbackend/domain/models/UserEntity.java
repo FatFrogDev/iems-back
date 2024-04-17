@@ -1,5 +1,6 @@
 package com.fatfrogdev.iemsbackend.domain.models;
 
+import com.fatfrogdev.iemsbackend.domain.models.enumerates.UserRole;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
@@ -34,9 +35,12 @@ public class UserEntity {
     @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Username must be alphanumeric.")
     private String username;
 
-    // Makes the logical deletion of the user
+
     @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean deleted;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
     public UserEntity(String email, String password, String username) {
         this.email = email;

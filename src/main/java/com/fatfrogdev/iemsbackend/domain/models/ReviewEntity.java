@@ -25,6 +25,7 @@ public class ReviewEntity {
     @Column(columnDefinition = "text")
     private String content;
 
+
     @Column(nullable = false, columnDefinition = "decimal(2,1)")
     @Positive(message = "Rating must be greater than 0.")
     @Max(value = 5, message = "Rating must be less than 5.")

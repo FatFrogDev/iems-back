@@ -28,7 +28,7 @@ public class ReviewId implements Serializable {
 
 
     @Positive(message = "Review number must be greater than 0.")
-    @Size(message = "Review number must be between 1 and 3.", min = 1, max = 3)
+    @Size(message = "You can only create between 1 and 2 reviews per product.", min = 1, max = 2)
     @Column(length = 1, nullable = false)
     private Integer reviewNumber;
 }
