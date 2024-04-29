@@ -45,7 +45,7 @@ public class ReviewServiceImpl implements IReviewService {
         Optional<ClientEntity> client = clientRepository.findByUserUsernameAndUserDeletedIsFalse(reviewRegisterDTO.getUserId());
         Optional<ProductEntity> product = productRepository.findById(reviewRegisterDTO.getProductId());
         if(client.isPresent() && product.isPresent()){
-            Integer reviewNumber = getReviewNumber(product.get().getProductId(), client.get().getClientId());
+            Integer reviewNumber = findLastReviewNumber(product.get().getProductId(), client.get().getClientId());
             return reviewConverter.
                     reviewRegisterDtoToEntity(reviewRegisterDTO,product.get(), client.get(), reviewNumber);
         }
@@ -53,11 +53,10 @@ public class ReviewServiceImpl implements IReviewService {
     }
 
 
-    private Integer getReviewNumber(String productId, String clientId){
+    private Integer findLastReviewNumber(String productId, String clientId){
         List<Integer> reviewNumberFound =  reviewRepository.findReviewNumber(productId,clientId);
         if(!reviewNumberFound.isEmpty()) {
-            reviewNumberFound.forEach(System.out::println);
-            return  reviewNumberFound.get(0) + 1;
+            return  reviewNumberFound.getFirst() + 1;
         }return 1;
     }
 }

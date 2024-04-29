@@ -44,10 +44,8 @@ public class ReviewConverter {
                 .productName(reviewEntity.getReviewId().getProduct().getName())
                 .clientUsername(reviewEntity.getReviewId().getClient().getUser().getUsername())
                 .reviewNumber(reviewEntity.getReviewId().getReviewNumber())
-                .reviewTitle(reviewEntity.getReviewTitle())
+                .reviewTitle(reviewEntity.getTittle())
                 .content(reviewEntity.getContent())
-                .overallRating(reviewEntity.getOverallRating())
-                .overview(reviewEntity.getOverview())
                 .pros(reviewEntity.getPros())
                 .contras(reviewEntity.getContras())
                 .build();

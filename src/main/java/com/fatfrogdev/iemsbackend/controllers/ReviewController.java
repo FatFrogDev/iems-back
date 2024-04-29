@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/reviews")
+@RequestMapping("/api/v1/reviews")
 public class ReviewController {
 
     private final IReviewService reviewService;

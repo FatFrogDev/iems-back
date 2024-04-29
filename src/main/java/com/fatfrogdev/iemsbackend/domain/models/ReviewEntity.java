@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-import java.util.List;
-
 @Data
 @Getter
 @Setter
@@ -20,27 +18,25 @@ public class ReviewEntity {
 
     @NotBlank(message = "Review title is required.")
     @Column(nullable = false, length = 45)
-    private String reviewTitle;
+    private String tittle;
 
     @Column(columnDefinition = "text")
     private String content;
 
-    @Column(nullable = false, columnDefinition = "decimal(2,1)")
-    @Positive(message = "Rating must be greater than 0.")
-    @Max(value = 5, message = "Rating must be less than 5.")
-    private Float overallRating;
-
-    @Size(max = 200, message = "Overview must be less than 200 characters.")
-    @Column(length = 200)
-    private String overview;
-
-    @Size(max = 200, message = "Overview must be less than 200 characters.")
+    @Size(max = 200, message = "pros must be less than 200 characters.")
     @Column(length = 200)
     private String pros;
 
-    @Size(max = 200, message = "Overview must be less than 200 characters.")
+    @Size(max = 200, message = "cons must be less than 200 characters.")
     @Column(length = 200)
     private String contras;
 
-    private List<String> images;
+    @Size(max = 250, message = "Equipment test specifications can't exceed 250 characters of length.")
+    private String equipmentSpecs;
+
+    @Size(max = 250, message = "Overview must be less or equals to 250 characters.")
+    private String conclusion;
+
+    @Column(columnDefinition = "JSON")
+    private String performedTracks; //TODO -> Add impl to handle json data type. DTO can get a list of strings.
 }

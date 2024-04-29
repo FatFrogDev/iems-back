@@ -12,7 +12,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/brands")
+@RequestMapping("/api/v1//brands")
 public class BrandController {
 
     private final IBrandService brandService;
