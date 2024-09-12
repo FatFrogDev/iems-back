@@ -1,30 +1,48 @@
 package com.fatfrogdev.iemsbackend.domain.models.enumerates;
 
-import org.springframework.beans.ConversionNotSupportedException;
-import org.springframework.core.convert.ConversionException;
-import org.springframework.core.convert.ConversionFailedException;
-import org.springframework.core.convert.ConverterNotFoundException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public enum ImagePrecision {
+    SEEMS_HOME_THEATER,
     SEEMS_REAL,
-    VERY_REAL,
-    NOTABLE,
+    REMARKABLE,
     NORMAL,
-    NOT_BAD,
-    NOT_BAD_AT_ALL,
+    NOT_PLEASANT,
+    FLAT,
     BAD;
 
-    public static ImagePrecision convertToImagePrecision(int value) {
-        return switch (value) {
-            case 0 -> ImagePrecision.SEEMS_REAL;
-            case 1 -> ImagePrecision.VERY_REAL;
-            case 2 -> ImagePrecision.NOTABLE;
-            case 3 -> ImagePrecision.NORMAL;
-            case 4 -> ImagePrecision.NOT_BAD;
-            case 5 -> ImagePrecision.NOT_BAD_AT_ALL;
-            case 6 -> ImagePrecision.BAD;
-            default -> throw new IllegalArgumentException( "value " + value + "not supported to be converted");
+    public static ImagePrecision getImagePrecision(String imagePrecision){
+        return switch (imagePrecision) {
+            case "SEEMS_HOME_THEATER" -> SEEMS_HOME_THEATER;
+            case "SEEMS_REAL" -> SEEMS_REAL;
+            case "REMARKABLE" -> REMARKABLE;
+            case "NORMAL" -> NORMAL;
+            case "NOT_PLEASANT" -> NOT_PLEASANT;
+            case "FLAT" -> FLAT;
+            case "BAD" -> BAD;
+            default -> throw new IllegalArgumentException("Invalid Image Precision");
         };
     }
 
+    public static String getImagePrecision(ImagePrecision imagePrecision){
+        return switch (imagePrecision) {
+            case SEEMS_HOME_THEATER -> "SEEMS_HOME_THEATER";
+            case SEEMS_REAL -> "SEEMS_REAL";
+            case REMARKABLE -> "REMARKABLE";
+            case NORMAL -> "NORMAL";
+            case NOT_PLEASANT -> "NOT_PLEASANT";
+            case FLAT -> "FLAT";
+            case BAD -> "BAD";
+        };
+    }
+
+    public static List<String> getImagePrecisionList(){
+        List<String> possibleListValues = new ArrayList<>(ImagePrecision.values().length);
+        for (ImagePrecision imagePrecision : ImagePrecision.values()){
+            possibleListValues.add(imagePrecision.toString());
+        }
+        return possibleListValues;
+    }
 }

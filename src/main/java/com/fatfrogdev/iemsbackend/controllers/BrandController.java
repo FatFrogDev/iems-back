@@ -18,22 +18,24 @@ public class BrandController {
     private final IBrandService brandService;
 
     @PostMapping("/save")
-    public ResponseEntity<BrandEntity> save(@RequestBody BrandEntity brandEntity) {
+    public ResponseEntity<BrandEntity> save(@RequestBody BrandEntity brandEntity) { // TODO: Add lower case when saving.
         return ResponseEntity.status(HttpStatus.CREATED).body(brandService.save(brandEntity));
     }
 
-    @GetMapping("") // brands?id=...
-    public ResponseEntity<BrandEntity> findById(@RequestParam("id") String brandId) {
-        return ResponseEntity.ok(brandService.findById(brandId));
+    @GetMapping("/all")
+    public ResponseEntity<List<BrandEntity>> findAll(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size) {
+        return ResponseEntity.status(HttpStatus.OK).body(brandService.findAll(page, size));
     }
 
-    @GetMapping("/query")
-    public ResponseEntity<List<BrandEntity>> findByBrandIdStartsWith(@RequestParam("startsWith") String prefix) {
-        return ResponseEntity.status(HttpStatus.OK).body(brandService.findByBrandIdStartsWith(prefix));
+    @GetMapping("/{brandId}")
+    public ResponseEntity<BrandEntity> findById(@PathVariable(value = "brandId") String brandId) {
+        return ResponseEntity.status(HttpStatus.OK).body(brandService.findById(brandId));
     }
 
-    @GetMapping("/query2")
-    public ResponseEntity<List<BrandEntity>> findByBrandIdContaining(@RequestParam("containing") String containing) {
-        return ResponseEntity.status(HttpStatus.OK).body(brandService.findByBrandIdContaining(containing));
+    @GetMapping("")
+    public ResponseEntity<List<BrandEntity>> findByParam(@RequestParam(value = "starts-with", required = false) String startsWith,
+                                                         @RequestParam(value = "contains", required = false) String contains,
+                                                         @RequestParam(value = "filial-owner", required = false) String filialOwner) {
+        return ResponseEntity.status(HttpStatus.OK).body(brandService.findByParam(startsWith, contains, filialOwner));
     }
 }

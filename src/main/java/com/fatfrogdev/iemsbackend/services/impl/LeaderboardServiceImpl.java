@@ -15,6 +15,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -35,7 +36,27 @@ public class LeaderboardServiceImpl implements ILeaderboardService {
     public LeaderboardViewDTO saveLeaderboard(LeaderboardRegisterDTO leaderboardRegisterDTO) {
         LeaderboardEntity leaderboardEntity = saveLeaderboardEntity(leaderboardRegisterDTO);
         leaderboardDetailsService.saveLeaderboardDetailsCollection(leaderboardRegisterDTO, leaderboardEntity);
-        return leaderboardDetailsService.findById(leaderboardEntity.getLeaderboardId(), null);
+        return findById(leaderboardEntity.getLeaderboardId(), null);
+    }
+
+    @Override
+    public LeaderboardViewDTO findById(String LeaderboardId, String order) { // TODO: Check if both exists
+        order = order == null ? "asc" : order; // TODO: validate word is "asc" or "desc" properly. // TODO: validate word is "asc" or "desc" properly.
+
+        boolean leaderboardExists = leaderboardRepository.existsById(LeaderboardId);
+        
+        if (leaderboardExists) {
+            LeaderboardEntity leaderboardEntity = leaderboardRepository.findById(LeaderboardId).orElseThrow(EntityNotFoundException::new);
+            return LeaderboardViewDTO.builder()
+                    .leaderboardId(LeaderboardId)
+                    .leaderboardName(leaderboardEntity.getName())
+                    .clientUsername(leaderboardEntity.getClient().getUser().getUsername())
+                    .leaderboardDetails(
+                            leaderboardDetailsService.findById(LeaderboardId, order)
+                    )
+                    .build();
+        } else
+            throw new RuntimeException("papa");
     }
 
 

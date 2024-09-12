@@ -7,14 +7,13 @@ import com.fatfrogdev.iemsbackend.domain.models.ClientEntity;
 import com.fatfrogdev.iemsbackend.domain.models.LeaderboardDetailsEntity;
 import com.fatfrogdev.iemsbackend.domain.models.LeaderboardEntity;
 import com.fatfrogdev.iemsbackend.domain.models.ProductEntity;
-import static com.fatfrogdev.iemsbackend.domain.models.enumerates.ImagePrecision.*;
-import static com.fatfrogdev.iemsbackend.domain.models.enumerates.SoundStageAmplitude.*;
-import jakarta.persistence.EntityNotFoundException;
+
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Component
 @Log4j2
@@ -25,8 +24,8 @@ public class LeaderboardConverter {
                 .leaderboard(leaderboardEntity)
                 .product(productEntity)
                 .productTop(leaderboardRegisterDTO.getProductTop())
-                .soundStageAmplitude(leaderboardRegisterDTO.getSoundStageAmplitude())
-                .imagePrecision(leaderboardRegisterDTO.getImagePrecision())
+                .soundStageAmplitude(String.valueOf(leaderboardRegisterDTO.getSoundStageAmplitude()))
+                .imagePrecision(String.valueOf(leaderboardRegisterDTO.getImagePrecision()))
                 .subBassQualityQuantity(leaderboardRegisterDTO.getSubBassQualityQuantity())
                 .bassQualityQuantity(leaderboardRegisterDTO.getBassQualityQuantity())
                 .mediumBassQualityQuantity(leaderboardRegisterDTO.getMediumBassQualityQuantity())
@@ -52,40 +51,30 @@ public class LeaderboardConverter {
                 .build();
     }
 
-
-    public List<LeaderboardDetailsViewDTO> objectListToDetailsViewDTO(List<Object[]> results){
-        if (results!=null) {
-            List<LeaderboardDetailsViewDTO> detailsViewDTOList = new ArrayList<>(results.size());
-
-            for (Object[] result : results) {
-                LeaderboardDetailsViewDTO dto = LeaderboardDetailsViewDTO.builder()
-                        .productId((String) result[0])
-                        .productName((String) result[1])
-                        .productBrand((String) result[2])
-                        .bassQualityQuantity((String) result[3])
-                        .buildQuality((String) result[4])
-                        .cableQuality((String) result[5])
-                        .comfort((String) result[6])
-                        .imagePrecision(
-                                convertToImagePrecision(Integer.parseInt(result[7].toString()))
-                        )
-                        .isBassHead((boolean) result[8])
-                        .isFunny((boolean) result[9])
-                        .mediumBassQualityQuantity((String) result[10])
-                        .midRangeQualityQuantity((String) result[11])
-                        .monitoringLiveStudio((String) result[12])
-                        .productTop((int) result[13])
-                        .sibilanceControl((String) result[14])
-                        .soundStageAmplitude(
-                                convertToSoundStageAmplitude(Integer.parseInt(result[15].toString()))
-                        )
-                        .subBassQualityQuantity((String) result[16])
-                        .videoGamesPerformance((String) result[17])
-                        .build();
-                detailsViewDTOList.add(dto);
-            }
-            return detailsViewDTOList;
+    public List<LeaderboardDetailsViewDTO> ObjectListToLeaderboardDetailsViewDTO(List<Object[]> objectList) {
+        List<LeaderboardDetailsViewDTO> leaderboardDetailsViewDTOList = new ArrayList<>(objectList.size());
+        for (Object[] object : objectList) {
+            leaderboardDetailsViewDTOList.add(LeaderboardDetailsViewDTO.builder()
+                    .productId((String) object[0])
+                    .productName((String) object[1])
+                    .productBrand((String) object[2])
+                    .bassQualityQuantity((String) object[3])
+                    .buildQuality((String) object[4])
+                    .cableQuality((String) object[5])
+                    .comfort((String) object[6])
+                    .imagePrecision((String) object[7])
+                    .isBassHead((Boolean) object[8])
+                    .isFunny((Boolean) object[9])
+                    .mediumBassQualityQuantity((String) object[10])
+                    .midRangeQualityQuantity((String) object[11])
+                    .monitoringLiveStudio((String) object[12])
+                    .productTop((Integer) object[13])
+                    .sibilanceControl((String) object[14])
+                    .soundStageAmplitude((String) object[15])
+                    .subBassQualityQuantity((String) object[16])
+                    .videoGamesPerformance((String) object[17])
+                    .build());
         }
-    throw new EntityNotFoundException("No results found for stored procedure");
+        return leaderboardDetailsViewDTOList;
     }
 }

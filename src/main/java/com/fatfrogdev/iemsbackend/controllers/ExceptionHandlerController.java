@@ -1,4 +1,4 @@
-package com.fatfrogdev.iemsbackend.controllers.advice;
+package com.fatfrogdev.iemsbackend.controllers;
 
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

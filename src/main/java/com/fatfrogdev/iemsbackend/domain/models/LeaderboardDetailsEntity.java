@@ -32,10 +32,10 @@ public class LeaderboardDetailsEntity {
     private int productTop;
 
     @Column(nullable = false)
-    private SoundStageAmplitude soundStageAmplitude;
+    private String soundStageAmplitude;
 
     @Column(nullable = false)
-    private ImagePrecision imagePrecision;
+    private String imagePrecision;
 
     @Column(length = 5)
     private String subBassQualityQuantity;

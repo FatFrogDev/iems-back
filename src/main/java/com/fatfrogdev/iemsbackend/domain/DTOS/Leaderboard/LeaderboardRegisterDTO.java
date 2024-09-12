@@ -14,7 +14,7 @@ public class LeaderboardRegisterDTO {
 
     private final LeaderboardValidator leaderboardValidator;
 
-    private String leaderboardName="My Leaderboard";
+    private String leaderboardName;
 
     private String clientUsername;
 

@@ -9,6 +9,7 @@ import com.fatfrogdev.iemsbackend.domain.models.ClientEntity;
 import com.fatfrogdev.iemsbackend.domain.models.LeaderboardDetailsEntity;
 import com.fatfrogdev.iemsbackend.domain.models.LeaderboardEntity;
 import com.fatfrogdev.iemsbackend.domain.models.ProductEntity;
+import com.fatfrogdev.iemsbackend.domain.models.enumerates.SoundStageAmplitude;
 import com.fatfrogdev.iemsbackend.repositories.ILeaderboardDetailsRepository;
 import com.fatfrogdev.iemsbackend.repositories.ILeaderboardRepository;
 import com.fatfrogdev.iemsbackend.repositories.IProductRepository;
@@ -18,6 +19,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,13 +35,6 @@ public class LeaderboardDetailsServiceImpl implements ILeaderboardDetailsService
 
     private final LeaderboardConverter leaderboardConverter;
 
-    @Override
-    public List<LeaderboardDetailsViewDTO> findLeaderboardDetailsByIdAndOrder(String leaderboardId, String customOrder) {
-        Optional<List<Object[]>> leaderboardDetails = leaderboardRepository.findLeaderboardDetailsByIdAndOrder(leaderboardId, customOrder);
-        if (leaderboardDetails.isPresent()){
-            return leaderboardConverter.objectListToDetailsViewDTO(leaderboardDetails.get());
-        }throw new EntityNotFoundException("Leaderboard details with id: " + leaderboardId + " not found :(");
-    }
 
     @Override
     public void saveLeaderboardDetailsCollection(LeaderboardRegisterDTO leaderboardRegisterDTO, LeaderboardEntity leaderboardEntity){ // TODO: Add commit/rollback exception.
@@ -70,24 +65,15 @@ public class LeaderboardDetailsServiceImpl implements ILeaderboardDetailsService
     }
 
     @Override
-    public LeaderboardViewDTO findById(String leaderboardId, String customOrder) {
-        customOrder = customOrder == null ? "asc" : customOrder;
+    public List<LeaderboardDetailsViewDTO> findById(String leaderboardId, String customOrder) {
+        customOrder = customOrder == null ? "asc" : customOrder; // TODO: validate word is "asc" or "desc" properly.
+
         Optional<LeaderboardEntity> optLeaderboardEntity = leaderboardRepository.findById(leaderboardId);
 
         if (optLeaderboardEntity.isPresent()) {
-
-            Optional<List<Object[]>> optLeaderboardDetails = leaderboardRepository.findLeaderboardDetailsByIdAndOrder(leaderboardId, customOrder);
-
-            if (optLeaderboardDetails.isPresent()) {
-                List<LeaderboardDetailsViewDTO> leaderboardDetailsViewDTOS = leaderboardConverter.objectListToDetailsViewDTO(optLeaderboardDetails.get());
-                return LeaderboardViewDTO.builder()
-                    .leaderboardId(optLeaderboardEntity.get().getLeaderboardId())
-                    .leaderboardName(optLeaderboardEntity.get().getName())
-                    .clientUsername(optLeaderboardEntity.get().getClient().getUser().getUsername())
-                    .leaderboardDetails(leaderboardDetailsViewDTOS)
-                    .build();
-                }
-            throw new EntityNotFoundException("Leaderboard not found :(");
+            return  leaderboardConverter.ObjectListToLeaderboardDetailsViewDTO(
+                    leaderboardRepository.findLeaderboardDetailsByIdAndOrder(leaderboardId, customOrder)
+            );
         } throw new EntityNotFoundException("Leaderboard details not found :(");
     }
 

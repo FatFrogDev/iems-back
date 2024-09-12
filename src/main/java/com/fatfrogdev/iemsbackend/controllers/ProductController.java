@@ -17,24 +17,23 @@ public class ProductController {
 
     private final IProductService productService;
 
-    @PostMapping("/save")
-    public ResponseEntity<ProductDTO> save(@RequestBody ProductDTO productDTO){
-        System.out.println("ProductDTO: " + productDTO.toString() );
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.save(productDTO));
+    @GetMapping("/all")
+    public ResponseEntity<List<ProductEntity>> findAl(){ // TODO: Add findAll function to the service with pagination.
+        return ResponseEntity.ok(null);
     }
 
-    @GetMapping("/find/{productId}")
+    @GetMapping("/{productId}")
     public ResponseEntity<ProductEntity> findById(@PathVariable String productId){
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.findById(productId));
     }
 
-    @GetMapping("/find2")
-    public ResponseEntity<List<ProductEntity>> findByNameStartingWith(@RequestParam("startsWith") String prefix){
-        return ResponseEntity.ok(productService.findByNameStartingWith(prefix));
+    @GetMapping("") // products?id=... TODO: Redirect to the proper function according to the parameters given in the request.
+    public ResponseEntity<List<ProductEntity>> findByNameStartingWith(@RequestParam("startsWith") String prefix, @RequestParam String containing){
+        return ResponseEntity.ok(null);
     }
 
-    @GetMapping("/find/name/{containing}")
-    public ResponseEntity<List<ProductEntity>> findByNameContaining(@PathVariable String containing){
-        return ResponseEntity.ok(productService.findByNameContaining(containing));
+    @PostMapping("/save")
+    public ResponseEntity<ProductDTO> save(@RequestBody ProductDTO productDTO){
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.save(productDTO));
     }
 }

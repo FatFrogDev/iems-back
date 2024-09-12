@@ -21,16 +21,16 @@ public class LeaderboardController {
 
     private final ILeaderboardDetailsService leaderboardDetailsService;
 
-    @GetMapping("/{id}{order}")
-    public ResponseEntity<LeaderboardViewDTO> findById(@PathVariable String id, @RequestParam(value = "order", required = false) String order){
-        return ResponseEntity.status(HttpStatus.FOUND).body(leaderboardDetailsService.findById(id, order));
-    }
-
-
     @PostMapping("/save")
     public ResponseEntity<?> save(@RequestBody LeaderboardRegisterDTO leaderboardRegisterDTO) {
         System.out.println(leaderboardRegisterDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(leaderboardService.saveLeaderboard(leaderboardRegisterDTO));
     }
+
+    @GetMapping("/{leaderboardId}/details")
+    public ResponseEntity<LeaderboardViewDTO> findById(@PathVariable String leaderboardId, @RequestParam(value = "order", required = false) String order){
+        return ResponseEntity.status(HttpStatus.OK).body(leaderboardService.findById(leaderboardId, order));
+    }
+
 }

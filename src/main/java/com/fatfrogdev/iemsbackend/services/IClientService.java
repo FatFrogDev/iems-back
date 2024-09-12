@@ -8,7 +8,5 @@ public interface IClientService {
 
     ClientViewDTO findByUserUsername(String username);
 
-    void deleteByUsername(String username);
-
-    boolean userIsAlreadyDeleted(String userId);
+    void activateOrDeactivateByUsername(String username, String action);
 }

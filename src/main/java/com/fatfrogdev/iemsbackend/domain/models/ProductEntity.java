@@ -17,7 +17,7 @@ import org.hibernate.annotations.UuidGenerator;
 @NoArgsConstructor
 @Entity
 @Table(name = "products")
-public class ProductEntity {
+public class ProductEntity { // TODO Add category entity?
 
     @Id
     @UuidGenerator

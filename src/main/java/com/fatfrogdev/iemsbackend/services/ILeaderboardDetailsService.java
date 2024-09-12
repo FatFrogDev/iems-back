@@ -9,9 +9,7 @@ import java.util.List;
 
 public interface ILeaderboardDetailsService {
 
-    List<LeaderboardDetailsViewDTO> findLeaderboardDetailsByIdAndOrder(String leaderboardId, String customOrder);
-
     void saveLeaderboardDetailsCollection(LeaderboardRegisterDTO leaderboardRegisterDTO, LeaderboardEntity leaderboardEntity);
 
-    LeaderboardViewDTO findById(String leaderboardId, String customOrder);
+    List<LeaderboardDetailsViewDTO> findById(String leaderboardId, String customOrder);
 }

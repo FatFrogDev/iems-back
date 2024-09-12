@@ -20,18 +20,15 @@ public class ClientController   {
         return ResponseEntity.status(HttpStatus.CREATED).body(clientService.save(personDTO));
     }
 
-
-    @GetMapping("") // users?username=...
-    public ResponseEntity<ClientViewDTO> findByUsername(@RequestParam("username") String username){
-        return ResponseEntity.ok(clientService.findByUserUsername(username));
+    @GetMapping("/{username}")
+    public ResponseEntity<ClientViewDTO> findByUsername(@PathVariable("username") String username){
+        return ResponseEntity.status(HttpStatus.OK).body(clientService.findByUserUsername(username));
     }
 
-
-    @PatchMapping("")
-    public ResponseEntity<ClientViewDTO> deactivateByUsername(@RequestParam("username") String username){
-        clientService.deleteByUsername(username);
+    @PatchMapping("/{username}") // TODO: Redirect to the proper function according to the parameters given in the request.
+    public ResponseEntity<ClientViewDTO> deactivateByUsername(@PathVariable("username") String username, @RequestParam("action") String action){
+        clientService.activateOrDeactivateByUsername(username, action);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
-
 
 }

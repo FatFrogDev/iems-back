@@ -25,7 +25,7 @@ public class ClientServiceImpl implements IClientService {
     private final ClientConverter clientConverter;
 
     @Override
-    public ClientViewDTO save(ClientRegisterDTO personDTO) { // TODO: Add validations for client already registered and deleted user.
+    public ClientViewDTO save(ClientRegisterDTO personDTO) { // TODO: Add validations for client already registered and deleted user. && update.
         ClientEntity clientEntity = clientConverter.registerDtoToEntity(personDTO);
         return clientConverter
                 .entityToViewDto(clientRepository.save(clientEntity));
@@ -33,28 +33,40 @@ public class ClientServiceImpl implements IClientService {
 
     @Override
     public ClientViewDTO findByUserUsername(String username) {
-        if (username.matches("^[a-zA-Z0-9]*$")) {
-            Optional<ClientEntity> optClientEntity = clientRepository.findByUserUsernameAndUserDeletedIsFalse(username);
-                if (optClientEntity.isPresent()){
+        if (!username.matches("^[a-zA-Z0-9]*$"))
+            throw new IllegalArgumentException("Invalid username format (Alphanumeric only)");
+
+        Optional<ClientEntity> optClientEntity = clientRepository.findByUserUsernameAndUserDeletedIsFalse(username);
+                if (optClientEntity.isPresent())
                     return clientConverter.entityToViewDto(optClientEntity.get());
-                }throw new EntityNotFoundException("User not found");
-        }throw new IllegalArgumentException("Invalid username format (Alphanumeric only)");
-    }
+                throw new EntityNotFoundException("User not found");
 
-
-    @Override
-    public void deleteByUsername(String username) {
-        if (username!=null){
-            UserEntity optlUserEntity = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
-                if (!userIsAlreadyDeleted(optlUserEntity.getUserId())){                // TODO: Add generic validation for id null and user is already deleted
-                    userRepository.deleteByUserId(optlUserEntity.getUserId());
-                } else throw new IllegalArgumentException("User is already deleted");
-        } else throw new IllegalArgumentException("Error getting the user id");
     }
 
     @Override
-    public boolean userIsAlreadyDeleted(String userId){
-        Optional<UserEntity> optUserEntity = userRepository.findByUserIdAndAndDeletedIsTrue(userId);
-        return optUserEntity.isPresent();
+    public void activateOrDeactivateByUsername(String username, String action) {
+        Optional<UserEntity> optUserEntity = userRepository.findByUsername(username);
+        if(optUserEntity.isEmpty())
+             throw new EntityNotFoundException("User with username given not found");
+        else {
+            boolean userIsDeleted = optUserEntity.get().isDeleted();
+
+            if (action.equals("deactivate")) {
+                if (!userIsDeleted)
+                    userRepository.deleteByUserId(optUserEntity.get().getUserId());
+                else
+                    throw new IllegalArgumentException("User is already deleted");
+
+            }
+            if (action.equals("activate")) {
+                if (userIsDeleted) {
+                    System.out.println("user" + optUserEntity.get().getUsername() + "activated");
+                    userRepository.activateByUserId(optUserEntity.get().getUserId());
+                }
+                else
+                    throw new IllegalArgumentException("User is not deleted");
+            }
+        }
     }
+
 }
