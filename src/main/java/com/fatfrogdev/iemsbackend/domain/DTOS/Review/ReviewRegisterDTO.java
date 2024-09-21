@@ -2,6 +2,9 @@ package com.fatfrogdev.iemsbackend.domain.DTOS.Review;
 
 import lombok.*;
 import org.hibernate.type.descriptor.jdbc.DecimalJdbcType;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Data
 @Getter
@@ -26,4 +29,5 @@ public class ReviewRegisterDTO {
 
     private String contras;
 
+    private MultipartFile[] images;
 }

@@ -16,8 +16,6 @@ public class ReviewViewDTO {
 
     private String clientUsername;
 
-    private int reviewNumber;
-
     private String reviewTitle;
 
     private String content;

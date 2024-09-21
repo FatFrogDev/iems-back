@@ -36,4 +36,8 @@ public class ProductEntity { // TODO Add category entity?
     @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "brand_id", referencedColumnName = "brandId")
     private BrandEntity brand;
+
+    public ProductEntity(String productId){
+        this.productId = productId;
+    }
 }

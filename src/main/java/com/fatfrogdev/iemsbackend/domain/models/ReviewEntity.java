@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @Getter
@@ -28,7 +28,7 @@ public class ReviewEntity {
     @Column(nullable = false, columnDefinition = "decimal(2,1)")
     @Positive(message = "Rating must be greater than 0.")
     @Max(value = 5, message = "Rating must be less than 5.")
-    private Float overallRating;
+    private float overallRating;
 
     @Size(max = 200, message = "Overview must be less than 200 characters.")
     @Column(length = 200)
@@ -42,5 +42,6 @@ public class ReviewEntity {
     @Column(length = 200)
     private String contras;
 
-    private List<String> images;
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    private Set<FileEntity> images;
 }
