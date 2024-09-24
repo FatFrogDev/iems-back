@@ -10,6 +10,8 @@ import com.fatfrogdev.iemsbackend.domain.models.LeaderboardDetailsEntity;
 import com.fatfrogdev.iemsbackend.domain.models.LeaderboardEntity;
 import com.fatfrogdev.iemsbackend.domain.models.ProductEntity;
 import com.fatfrogdev.iemsbackend.domain.models.enumerates.SoundStageAmplitude;
+import com.fatfrogdev.iemsbackend.exceptions.leaderboard.LeaderboardDetailsNotFoundException;
+import com.fatfrogdev.iemsbackend.exceptions.product.ProductNotFoundException;
 import com.fatfrogdev.iemsbackend.repositories.ILeaderboardDetailsRepository;
 import com.fatfrogdev.iemsbackend.repositories.ILeaderboardRepository;
 import com.fatfrogdev.iemsbackend.repositories.IProductRepository;
@@ -37,7 +39,7 @@ public class LeaderboardDetailsServiceImpl implements ILeaderboardDetailsService
 
 
     @Override
-    public void saveLeaderboardDetailsCollection(LeaderboardRegisterDTO leaderboardRegisterDTO, LeaderboardEntity leaderboardEntity){ // TODO: Add commit/rollback exception.
+    public void saveLeaderboardDetailsCollection(LeaderboardRegisterDTO leaderboardRegisterDTO, LeaderboardEntity leaderboardEntity){ // TODO: Add commit/rollback exception and other exceptions.
 
         List<LeaderboardDetailsEntity> leaderboardDetailsEntityList = new ArrayList<>();
 
@@ -74,7 +76,7 @@ public class LeaderboardDetailsServiceImpl implements ILeaderboardDetailsService
             return  leaderboardConverter.ObjectListToLeaderboardDetailsViewDTO(
                     leaderboardRepository.findLeaderboardDetailsByIdAndOrder(leaderboardId, customOrder)
             );
-        } throw new EntityNotFoundException("Leaderboard details not found :(");
+        } throw new LeaderboardDetailsNotFoundException(String.format("Error: Leaderboard details of leaderboard with id %s not found :(", leaderboardId));
     }
 
     private LeaderboardDetailsEntity mergeLeaderboardDetailsEntity(LeaderboardDetailsRegisterDTO leaderboardDetailsRegisterDTO, LeaderboardEntity leaderboardEntity, ClientEntity clientEntity, ProductEntity productEntity) {
@@ -85,6 +87,7 @@ public class LeaderboardDetailsServiceImpl implements ILeaderboardDetailsService
         Optional<String> optProductId = productRepository.findProductIdByProductNameAndProductBrand(productName,productBrand);
         if (optProductId.isPresent())
             return ProductEntity.builder().productId(optProductId.get()).build();
-        throw new EntityNotFoundException("Product with name " + productName + " and brand " + productBrand + " not found .");
+        else
+            throw new ProductNotFoundException(String.format("Product with name %s and brand %s not found .", productName, productBrand));
     }
 }

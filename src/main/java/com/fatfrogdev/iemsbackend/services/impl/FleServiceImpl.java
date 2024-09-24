@@ -1,15 +1,13 @@
 package com.fatfrogdev.iemsbackend.services.impl;
 
 import com.fatfrogdev.iemsbackend.domain.models.FileEntity;
+import com.fatfrogdev.iemsbackend.exceptions.file.FileNotFoundException;
 import com.fatfrogdev.iemsbackend.repositories.IFileRepository;
 import com.fatfrogdev.iemsbackend.services.IFileService;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -24,7 +22,7 @@ public class FleServiceImpl implements IFileService {
     @Override
     public byte[] findImageById(String fileId) {
         FileEntity fileEntity = fileRepository.findImageDataByFileIdAndTypeStartsWith(fileId, "image/")
-                .orElseThrow(() -> new EntityNotFoundException("Image not found."));
+                .orElseThrow(() -> new FileNotFoundException(String.format("Error: Image with id %s not found or it is not marked as image", fileId)));
         return fileEntity.getData();
     }
 
@@ -32,7 +30,7 @@ public class FleServiceImpl implements IFileService {
     public void deleteImageById(String fileId) {
         boolean imageExists = fileRepository.existsByFileIdAndTypeStartsWith(fileId, "image/");
         if (!imageExists)
-            throw new EntityNotFoundException("Image not found.");
+            throw new FileNotFoundException(String.format("Error: Image with id %s not found or it is not marked as image.", fileId));
         else
             fileRepository.deleteById(fileId);
     }

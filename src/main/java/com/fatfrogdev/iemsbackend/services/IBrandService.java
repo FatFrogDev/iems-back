@@ -11,12 +11,6 @@ public interface IBrandService {
 
     BrandEntity findById(String brandId);
 
-    List<BrandEntity> findByBrandIdStartsWith(String prefix);
-
-    List<BrandEntity> findByBrandIdContaining(String containing);
-
-    List<BrandEntity> findByFilialOwner(String containing);
-
     List<BrandEntity> findAll(Integer page, Integer size);
 
     List<BrandEntity>  findByParam(String startsWith, String contains, String filialOwner);

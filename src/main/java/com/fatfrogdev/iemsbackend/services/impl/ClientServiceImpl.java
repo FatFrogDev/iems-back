@@ -5,10 +5,13 @@ import com.fatfrogdev.iemsbackend.domain.DTOS.Client.ClientRegisterDTO;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Client.ClientViewDTO;
 import com.fatfrogdev.iemsbackend.domain.models.ClientEntity;
 import com.fatfrogdev.iemsbackend.domain.models.UserEntity;
+import com.fatfrogdev.iemsbackend.exceptions.WrongArgumentsException;
+import com.fatfrogdev.iemsbackend.exceptions.client.ClientIsAlreadyActiveException;
+import com.fatfrogdev.iemsbackend.exceptions.client.ClientNotFoundException;
+import com.fatfrogdev.iemsbackend.exceptions.client.ClientWasAlreadyDeactivatedException;
 import com.fatfrogdev.iemsbackend.repositories.IClientRepository;
 import com.fatfrogdev.iemsbackend.repositories.IUserRepository;
 import com.fatfrogdev.iemsbackend.services.IClientService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,21 +36,21 @@ public class ClientServiceImpl implements IClientService {
 
     @Override
     public ClientViewDTO findByUserUsername(String username) {
-        if (!username.matches("^[a-zA-Z0-9]*$"))
-            throw new IllegalArgumentException("Invalid username format (Alphanumeric only)");
+        if (username.length() < 3 || !username.matches("^[a-zA-Z0-9]*$"))
+            throw new WrongArgumentsException("Error: Username must be alphanumeric and have at least 3 characters");
 
         Optional<ClientEntity> optClientEntity = clientRepository.findByUserUsernameAndUserDeletedIsFalse(username);
                 if (optClientEntity.isPresent())
                     return clientConverter.entityToViewDto(optClientEntity.get());
-                throw new EntityNotFoundException("User not found");
-
+                else
+                    throw new ClientNotFoundException(String.format("Error: Client with %s username not found", username));
     }
 
     @Override
     public void activateOrDeactivateByUsername(String username, String action) {
         Optional<UserEntity> optUserEntity = userRepository.findByUsername(username);
         if(optUserEntity.isEmpty())
-             throw new EntityNotFoundException("User with username given not found");
+             throw new ClientNotFoundException(String.format("Error: Client with %s username not found", username));
         else {
             boolean userIsDeleted = optUserEntity.get().isDeleted();
 
@@ -55,8 +58,7 @@ public class ClientServiceImpl implements IClientService {
                 if (!userIsDeleted)
                     userRepository.deleteByUserId(optUserEntity.get().getUserId());
                 else
-                    throw new IllegalArgumentException("User is already deleted");
-
+                    throw new ClientWasAlreadyDeactivatedException("Error: Client was already deleted");
             }
             if (action.equals("activate")) {
                 if (userIsDeleted) {
@@ -64,7 +66,7 @@ public class ClientServiceImpl implements IClientService {
                     userRepository.activateByUserId(optUserEntity.get().getUserId());
                 }
                 else
-                    throw new IllegalArgumentException("User is not deleted");
+                    throw new ClientIsAlreadyActiveException("Error: User is already active");
             }
         }
     }

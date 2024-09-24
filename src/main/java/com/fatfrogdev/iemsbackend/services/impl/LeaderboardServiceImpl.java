@@ -7,6 +7,8 @@ import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardViewDTO;
 import com.fatfrogdev.iemsbackend.domain.models.ClientEntity;
 import com.fatfrogdev.iemsbackend.domain.models.LeaderboardEntity;
 import com.fatfrogdev.iemsbackend.domain.models.UserEntity;
+import com.fatfrogdev.iemsbackend.exceptions.client.ClientNotFoundException;
+import com.fatfrogdev.iemsbackend.exceptions.leaderboard.LeaderboardNotFoundException;
 import com.fatfrogdev.iemsbackend.repositories.IClientRepository;
 import com.fatfrogdev.iemsbackend.repositories.ILeaderboardRepository;
 import com.fatfrogdev.iemsbackend.services.ILeaderboardDetailsService;
@@ -42,48 +44,45 @@ public class LeaderboardServiceImpl implements ILeaderboardService {
     @Override
     public LeaderboardViewDTO findById(String LeaderboardId, String order) { // TODO: Check if both exists
         order = order == null ? "asc" : order; // TODO: validate word is "asc" or "desc" properly. // TODO: validate word is "asc" or "desc" properly.
-
         boolean leaderboardExists = leaderboardRepository.existsById(LeaderboardId);
         
-        if (leaderboardExists) {
-            LeaderboardEntity leaderboardEntity = leaderboardRepository.findById(LeaderboardId).orElseThrow(EntityNotFoundException::new);
+        if (!leaderboardExists)
+            throw new LeaderboardNotFoundException(String.format("Leaderboard with id %s not found", LeaderboardId));
+
+        LeaderboardEntity leaderboardEntity = leaderboardRepository.findById(LeaderboardId)
+                .orElseThrow(() -> new LeaderboardNotFoundException(String.format("Leaderboard with id %s not found", LeaderboardId)));
+
             return LeaderboardViewDTO.builder()
                     .leaderboardId(LeaderboardId)
                     .leaderboardName(leaderboardEntity.getName())
                     .clientUsername(leaderboardEntity.getClient().getUser().getUsername())
                     .leaderboardDetails(
                             leaderboardDetailsService.findById(LeaderboardId, order)
-                    )
-                    .build();
-        } else
-            throw new RuntimeException("papa");
+                    ).build();
     }
 
 
     private LeaderboardEntity saveLeaderboardEntity(LeaderboardRegisterDTO leaderboardRegisterDTO) { //TODO? Refactor to add personalized exception
 
-        Optional<String> optClientId = findClientIdByUsername(leaderboardRegisterDTO.getClientUsername());
-        Optional<String> optUserId = findUserIdByUsername(leaderboardRegisterDTO.getClientUsername());
+        String optClientId = findClientIdByUsername(leaderboardRegisterDTO.getClientUsername());
+        String optUserId = findUserIdByUsername(leaderboardRegisterDTO.getClientUsername());
 
-        if (optClientId.isPresent()) { // TODO: Add validation for client deleted not able to save a leaderboard.
-            if (optUserId.isPresent()) {
-                ClientEntity clientEntity = new ClientEntity(optClientId.get(),
-                                            new UserEntity(optUserId.get(),
-                                            leaderboardRegisterDTO.getClientUsername()));
-                LeaderboardEntity leaderboardEntity = leaderboardConverter.registerDtoToLeaderboardEntity(leaderboardRegisterDTO, clientEntity);
-                return leaderboardRepository.save(leaderboardEntity);
-            }
-            throw new EntityNotFoundException("User " + leaderboardRegisterDTO.getLeaderboardDetails() + " not found");
-        }
-        throw new EntityNotFoundException("Client with username " +  leaderboardRegisterDTO.getLeaderboardDetails() + " not found");
+        ClientEntity clientEntity = new ClientEntity(optClientId,
+                                        new UserEntity(optUserId,
+                                        leaderboardRegisterDTO.getClientUsername()));
+
+        LeaderboardEntity leaderboardEntity = leaderboardConverter.registerDtoToLeaderboardEntity(leaderboardRegisterDTO, clientEntity);
+            return leaderboardRepository.save(leaderboardEntity);
     }
 
-
-    private Optional<String> findClientIdByUsername(String clientUsername) {
-        return clientRepository.findClientIdByUserUsername(clientUsername);
+    private String findClientIdByUsername(String clientUsername) {
+        return clientRepository.findClientIdByUserUsername(clientUsername)
+                .orElseThrow(()->new ClientNotFoundException(String.format("Client with username %s not found", clientUsername)));
     }
 
-    private Optional<String> findUserIdByUsername(String clientUsername) {
-        return clientRepository.findUserIdByUserUsername(clientUsername);
+    private String findUserIdByUsername(String clientUsername) {
+        return clientRepository.findUserIdByUserUsername(clientUsername)
+                .orElseThrow(()->new ClientNotFoundException(String.format("Client with username %s not found", clientUsername)));
     }
+
 }
