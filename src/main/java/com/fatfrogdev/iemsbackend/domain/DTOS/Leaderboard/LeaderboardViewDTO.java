@@ -14,7 +14,7 @@ public class LeaderboardViewDTO {
 
     private String leaderboardId;
     private String leaderboardName;
-    private String clientUsername;
+    private String userUsername;
     private List<LeaderboardDetailsViewDTO> leaderboardDetails;
 
 }

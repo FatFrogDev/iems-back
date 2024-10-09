@@ -19,7 +19,7 @@ public class CategoryEntity {
         @Column(nullable = false, length = 45)
         private String categoryName;
 
-        @Column(columnDefinition = "varchar(100)", length = 100)
-        @Size(max = 100 )
+        @Column(length = 250)
+        @Size(max = 250)
         private String description;
 }

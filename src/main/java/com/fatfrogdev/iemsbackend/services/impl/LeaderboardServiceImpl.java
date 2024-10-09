@@ -1,24 +1,18 @@
 package com.fatfrogdev.iemsbackend.services.impl;
 
-import ch.qos.logback.core.net.server.Client;
 import com.fatfrogdev.iemsbackend.converters.LeaderboardConverter;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardRegisterDTO;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardViewDTO;
-import com.fatfrogdev.iemsbackend.domain.models.ClientEntity;
 import com.fatfrogdev.iemsbackend.domain.models.LeaderboardEntity;
 import com.fatfrogdev.iemsbackend.domain.models.UserEntity;
-import com.fatfrogdev.iemsbackend.exceptions.client.ClientNotFoundException;
+import com.fatfrogdev.iemsbackend.exceptions.user.UserNotFoundException;
 import com.fatfrogdev.iemsbackend.exceptions.leaderboard.LeaderboardNotFoundException;
-import com.fatfrogdev.iemsbackend.repositories.IClientRepository;
 import com.fatfrogdev.iemsbackend.repositories.ILeaderboardRepository;
+import com.fatfrogdev.iemsbackend.repositories.IUserRepository;
 import com.fatfrogdev.iemsbackend.services.ILeaderboardDetailsService;
 import com.fatfrogdev.iemsbackend.services.ILeaderboardService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 
 @AllArgsConstructor
@@ -29,10 +23,9 @@ public class LeaderboardServiceImpl implements ILeaderboardService {
 
     private final ILeaderboardDetailsService leaderboardDetailsService;
 
-    private final IClientRepository clientRepository;
-
     private final LeaderboardConverter leaderboardConverter;
 
+    private final IUserRepository userRepository;
 
     @Override
     public LeaderboardViewDTO saveLeaderboard(LeaderboardRegisterDTO leaderboardRegisterDTO) {
@@ -55,34 +48,20 @@ public class LeaderboardServiceImpl implements ILeaderboardService {
             return LeaderboardViewDTO.builder()
                     .leaderboardId(LeaderboardId)
                     .leaderboardName(leaderboardEntity.getName())
-                    .clientUsername(leaderboardEntity.getClient().getUser().getUsername())
+                    .userUsername(leaderboardEntity.getUser().getUsername())
                     .leaderboardDetails(
-                            leaderboardDetailsService.findById(LeaderboardId, order)
+                            leaderboardDetailsService.findByLeaderboardId(LeaderboardId, order)
                     ).build();
     }
 
 
     private LeaderboardEntity saveLeaderboardEntity(LeaderboardRegisterDTO leaderboardRegisterDTO) { //TODO? Refactor to add personalized exception
+        UserEntity userEntity = userRepository.findByUsernameAndActiveIsTrue(leaderboardRegisterDTO.getUser())
+                .orElseThrow(()-> new UserNotFoundException(String.format("User with username %s not found.", leaderboardRegisterDTO.getUser())));
 
-        String optClientId = findClientIdByUsername(leaderboardRegisterDTO.getClientUsername());
-        String optUserId = findUserIdByUsername(leaderboardRegisterDTO.getClientUsername());
-
-        ClientEntity clientEntity = new ClientEntity(optClientId,
-                                        new UserEntity(optUserId,
-                                        leaderboardRegisterDTO.getClientUsername()));
-
-        LeaderboardEntity leaderboardEntity = leaderboardConverter.registerDtoToLeaderboardEntity(leaderboardRegisterDTO, clientEntity);
+        LeaderboardEntity leaderboardEntity = leaderboardConverter
+                .registerDtoToLeaderboardEntity(leaderboardRegisterDTO, userEntity);
             return leaderboardRepository.save(leaderboardEntity);
-    }
-
-    private String findClientIdByUsername(String clientUsername) {
-        return clientRepository.findClientIdByUserUsername(clientUsername)
-                .orElseThrow(()->new ClientNotFoundException(String.format("Client with username %s not found", clientUsername)));
-    }
-
-    private String findUserIdByUsername(String clientUsername) {
-        return clientRepository.findUserIdByUserUsername(clientUsername)
-                .orElseThrow(()->new ClientNotFoundException(String.format("Client with username %s not found", clientUsername)));
     }
 
 }

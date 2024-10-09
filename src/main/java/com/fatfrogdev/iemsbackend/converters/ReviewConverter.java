@@ -3,6 +3,7 @@ package com.fatfrogdev.iemsbackend.converters;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Review.ReviewRegisterDTO;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Review.ReviewViewDTO;
 import com.fatfrogdev.iemsbackend.domain.models.*;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -29,12 +30,14 @@ public class ReviewConverter {
      }
     }
 
-    public ReviewEntity reviewRegisterDtoToEntity(ReviewRegisterDTO reviewRegisterDTO, ProductEntity productEntity, ClientEntity clientEntity, MultipartFile[] images) {
+    public ReviewEntity reviewRegisterDtoToEntity(ReviewRegisterDTO reviewRegisterDTO, UserEntity userEntity, ProductEntity productEntity, MultipartFile[] images) {
         try {
             ReviewEntity reviewEntity = reviewRegisterDtoToEntity(reviewRegisterDTO);
             if (reviewEntity==null)
                 return null;
-            reviewEntity.setReviewId(new ReviewId(clientEntity, productEntity));
+
+            reviewEntity.setUser(userEntity);
+            reviewEntity.setProduct(productEntity);
 
             if (images == null)
                 return reviewEntity;
@@ -55,18 +58,21 @@ public class ReviewConverter {
         }
     }
 
-
     public ReviewViewDTO entityToViewDto(ReviewEntity reviewEntity) {
+        String[]  images = reviewEntity.getImages().stream()
+                .map(fileEntity -> "localhost:8080/files/images/"+fileEntity.getFileId())
+                .toArray(String[]::new);
         return ReviewViewDTO.builder()
-                .brandId(reviewEntity.getReviewId().getProduct().getBrand().getBrandId())
-                .productName(reviewEntity.getReviewId().getProduct().getName())
-                .clientUsername(reviewEntity.getReviewId().getClient().getUser().getUsername())
+                .brandId(reviewEntity.getProduct().getBrand().getBrandId())
+                .productName(reviewEntity.getProduct().getName())
+                .clientUsername(reviewEntity.getUser().getUsername())
                 .reviewTitle(reviewEntity.getReviewTitle())
                 .content(reviewEntity.getContent())
                 .overallRating(reviewEntity.getOverallRating())
                 .overview(reviewEntity.getOverview())
                 .pros(reviewEntity.getPros())
                 .contras(reviewEntity.getContras())
+                .images(images)
                 .build();
     }
 }

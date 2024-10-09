@@ -28,4 +28,6 @@ public class ReviewViewDTO {
 
     private String contras;
 
+    private String[] images;
+
 }

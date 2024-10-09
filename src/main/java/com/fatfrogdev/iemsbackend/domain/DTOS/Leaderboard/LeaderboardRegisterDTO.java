@@ -16,7 +16,7 @@ public class LeaderboardRegisterDTO {
 
     private String leaderboardName;
 
-    private String clientUsername;
+    private String user;
 
     private List<LeaderboardDetailsRegisterDTO> leaderboardDetails;
 

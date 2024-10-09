@@ -20,7 +20,7 @@ class IemsBackendApplicationTests {
 
      LeaderboardRegisterDTO leaderboardList =  LeaderboardRegisterDTO.builder()
                 .name("Test leaderboard")
-                .client("Test client")
+                .user("Test user")
                 .build();
 
     leaderboardList.setDetails(details);

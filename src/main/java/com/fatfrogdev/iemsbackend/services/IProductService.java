@@ -13,4 +13,6 @@ public interface IProductService {
     List<ProductEntity> findByNameStartingWith(String prefix);
 
     List<ProductEntity> findByNameContaining(String containing);
+
+    List<ProductEntity> findAll();
 }

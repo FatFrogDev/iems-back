@@ -3,8 +3,6 @@ package com.fatfrogdev.iemsbackend.controllers;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Review.ReviewRegisterDTO;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Review.ReviewViewDTO;
 import com.fatfrogdev.iemsbackend.services.IReviewService;
-import com.fatfrogdev.iemsbackend.services.IFileService;
-import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-
 @AllArgsConstructor
 @RestController
 @RequestMapping("/reviews")
@@ -24,37 +21,40 @@ public class ReviewController {
 
     private final IReviewService reviewService;
 
-    private final IFileService uploadFileService;
-
     private final Logger LOGGER = LoggerFactory.getLogger(ReviewController.class);
 
     @PostMapping(value = "/save", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ReviewViewDTO> saveWithoutImages(@RequestBody ReviewRegisterDTO reviewRegisterDTO) {
-        LOGGER.info("Review saved");
+        LOGGER.info("Review saved.");
         return ResponseEntity.status(HttpStatus.OK)
                 .body(reviewService.saveWithoutImages(reviewRegisterDTO, null));
+    }
 
+    @GetMapping("/{reviewId}")
+    public ResponseEntity<ReviewViewDTO> findReviewById(@PathVariable String reviewId){
+        LOGGER.info(String.format("Searching for review with id: %s ", reviewId));
+        return ResponseEntity.status(HttpStatus.OK).body(reviewService.findReviewById(reviewId));
     }
 
     @PostMapping(value = "/images/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<Void> saveReviewImages(@RequestParam("c") String clientId, @RequestParam("p") String productId, @RequestParam("images") MultipartFile[] images) throws IOException {
-        LOGGER.info("{} images uploaded.", images.length);
-        LOGGER.info(String.format("Review:{Client: %s, Product: %s}", clientId, productId));
-        reviewService.saveReviewImages(clientId, productId, images);
+    public ResponseEntity<Void> saveReviewImages(@RequestParam("r") String reviewId, @RequestParam("images") MultipartFile[] images) throws IOException {
+        LOGGER.info(String.format("%d images uploaded to review with id: %s", images.length, reviewId));
+        reviewService.saveReviewImages(reviewId, images);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @DeleteMapping("")
-    public ResponseEntity<Void> deleteReview(@RequestParam("c") String clientId, @RequestParam("p") String productId){
-        reviewService.deleteReview(clientId, productId);
-        LOGGER.info(String.format("Review deleted: {Client: %s, Product: %s}", clientId, productId));
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable String reviewId){
+        reviewService.deleteReview(reviewId);
+        LOGGER.warn(String.format("Review with id: %s deleted", reviewId));
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @DeleteMapping("/images/{imageId}")
-    public ResponseEntity<Void> deleteReviewImage(@PathVariable String imageId, @RequestParam("c") String clientId, @RequestParam("p") String productId){
-        reviewService.deleteReviewImages(clientId, productId, imageId);
-        LOGGER.info(String.format("Image %s deleted", imageId));
+    @DeleteMapping("/{reviewId}/images/{imageId}")
+    public ResponseEntity<Void> deleteReviewImage(@PathVariable String imageId, @PathVariable String reviewId){
+        reviewService.deleteReviewImages(reviewId, imageId);
+        LOGGER.warn(String.format("Image %s deleted", imageId));
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
 }

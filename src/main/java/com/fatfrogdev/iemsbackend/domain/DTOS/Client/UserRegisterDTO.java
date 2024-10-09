@@ -1,6 +1,5 @@
 package com.fatfrogdev.iemsbackend.domain.DTOS.Client;
 
-import com.fatfrogdev.iemsbackend.domain.models.UserEntity;
 import lombok.*;
 
 @Data
@@ -8,7 +7,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClientRegisterDTO {
+public class UserRegisterDTO {
 
     private String name;
 

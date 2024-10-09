@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
-public class ClientViewDTO {
+public class UserViewDTO {
 
     private String name;
     private String country;

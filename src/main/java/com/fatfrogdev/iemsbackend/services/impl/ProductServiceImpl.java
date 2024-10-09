@@ -3,10 +3,13 @@ package com.fatfrogdev.iemsbackend.services.impl;
 import com.fatfrogdev.iemsbackend.converters.ProductConverter;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Product.ProductDTO;
 import com.fatfrogdev.iemsbackend.domain.models.BrandEntity;
+import com.fatfrogdev.iemsbackend.domain.models.CategoryEntity;
 import com.fatfrogdev.iemsbackend.domain.models.ProductEntity;
 import com.fatfrogdev.iemsbackend.exceptions.product.ProductNotFoundException;
+import com.fatfrogdev.iemsbackend.repositories.ICategoryRepository;
 import com.fatfrogdev.iemsbackend.repositories.IProductRepository;
 import com.fatfrogdev.iemsbackend.services.IBrandService;
+import com.fatfrogdev.iemsbackend.services.ICategoryService;
 import com.fatfrogdev.iemsbackend.services.IProductService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -22,13 +25,18 @@ public class ProductServiceImpl implements IProductService {
 
     private final IBrandService brandService;
 
+    private final ICategoryService categoryService;
+
     private final ProductConverter productConverter;
 
     @Override
-    public ProductDTO save(ProductDTO productDTO) { //TODO: add product DTO or DTOS
-        ProductEntity productEntity = productConverter.registerDtoToEntity(productDTO);
+    public ProductDTO save(ProductDTO productDTO) {
         BrandEntity optBrandEntity = brandService.findById(productDTO.getBrand());
+        CategoryEntity optCategoryEntity = categoryService.findByName(productDTO.getCategory());
+        ProductEntity productEntity = productConverter.registerDtoToEntity(productDTO);
+
         productEntity.setBrand(optBrandEntity);
+        productEntity.setCategory(optCategoryEntity);
         return productConverter.entityToDto(productRepository.save(productEntity));
     }
 
@@ -40,12 +48,19 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public List<ProductEntity> findByNameStartingWith(String prefix) {
-        return productRepository.findByNameStartingWith(prefix).orElse(null);
+        return productRepository.findByNameStartingWith(prefix)
+                .orElseThrow(()->new ProductNotFoundException(String.format("Error: Products starting with %s not found", prefix)));
     }
 
     @Override
     public List<ProductEntity> findByNameContaining(String containing) {
-        return productRepository.findByNameContaining(containing).orElse(null);
+        return productRepository.findByNameContaining(containing)
+                .orElseThrow(()->new ProductNotFoundException(String.format("Error: Products containing %s not found", containing)));
+    }
+
+    @Override
+    public List<ProductEntity> findAll() {
+        return productRepository.findAll();
     }
 
 }

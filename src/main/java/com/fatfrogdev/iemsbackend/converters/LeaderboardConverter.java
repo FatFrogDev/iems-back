@@ -3,11 +3,11 @@ package com.fatfrogdev.iemsbackend.converters;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardDetailsRegisterDTO;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardDetailsViewDTO;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardRegisterDTO;
-import com.fatfrogdev.iemsbackend.domain.models.ClientEntity;
 import com.fatfrogdev.iemsbackend.domain.models.LeaderboardDetailsEntity;
 import com.fatfrogdev.iemsbackend.domain.models.LeaderboardEntity;
 import com.fatfrogdev.iemsbackend.domain.models.ProductEntity;
 
+import com.fatfrogdev.iemsbackend.domain.models.UserEntity;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +18,7 @@ import java.util.List;
 @Component
 @Log4j2
 public class LeaderboardConverter {
-    public LeaderboardDetailsEntity DetailsRegisterDtoToDetailsEntity(LeaderboardDetailsRegisterDTO leaderboardRegisterDTO, LeaderboardEntity leaderboardEntity, ClientEntity clientEntity, ProductEntity productEntity) {
+    public LeaderboardDetailsEntity DetailsRegisterDtoToDetailsEntity(LeaderboardDetailsRegisterDTO leaderboardRegisterDTO, LeaderboardEntity leaderboardEntity, UserEntity userEntity, ProductEntity productEntity) {
         // TODO: validate data is accurate to avoid exceptions.¿
         return LeaderboardDetailsEntity.builder()
                 .leaderboard(leaderboardEntity)
@@ -42,12 +42,12 @@ public class LeaderboardConverter {
                 .build();
     }
 
-    public LeaderboardEntity registerDtoToLeaderboardEntity(LeaderboardRegisterDTO leaderboardRegisterDTO, ClientEntity clientEntity) {
+    public LeaderboardEntity registerDtoToLeaderboardEntity(LeaderboardRegisterDTO leaderboardRegisterDTO, UserEntity userEntity) {
         // TODO: validate data is accurate to avoid null pointer exceptions (DTO & ClientEntity).
         return LeaderboardEntity.builder()
                 .leaderboardId(null)
-                .client(clientEntity)
                 .name(leaderboardRegisterDTO.getLeaderboardName())
+                .user(userEntity)
                 .build();
     }
 

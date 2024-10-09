@@ -4,18 +4,17 @@ import com.fatfrogdev.iemsbackend.converters.ReviewConverter;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Review.ReviewRegisterDTO;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Review.ReviewViewDTO;
 import com.fatfrogdev.iemsbackend.domain.models.*;
-import com.fatfrogdev.iemsbackend.exceptions.client.ClientNotFoundException;
+import com.fatfrogdev.iemsbackend.exceptions.user.UserNotFoundException;
 import com.fatfrogdev.iemsbackend.exceptions.file.FileHasNotValidExtensionException;
 import com.fatfrogdev.iemsbackend.exceptions.file.FileNotFoundException;
 import com.fatfrogdev.iemsbackend.exceptions.file.FileSizeNotValidException;
 import com.fatfrogdev.iemsbackend.exceptions.product.ProductNotFoundException;
 import com.fatfrogdev.iemsbackend.exceptions.review.ReviewNotFoundException;
-import com.fatfrogdev.iemsbackend.repositories.IClientRepository;
 import com.fatfrogdev.iemsbackend.repositories.IProductRepository;
 import com.fatfrogdev.iemsbackend.repositories.IReviewRepository;
+import com.fatfrogdev.iemsbackend.repositories.IUserRepository;
 import com.fatfrogdev.iemsbackend.services.IFileService;
 import com.fatfrogdev.iemsbackend.services.IReviewService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,7 @@ public class ReviewServiceImpl implements IReviewService {
 
     private final IProductRepository productRepository;
 
-    private final IClientRepository clientRepository;
+    private final IUserRepository userRepository;
 
     private IFileService fileService;
 
@@ -46,8 +45,8 @@ public class ReviewServiceImpl implements IReviewService {
     }
 
     @Override
-    public void saveReviewImages(String clientId, String productId, MultipartFile[] images) throws IOException {
-        ReviewEntity reviewEntity = reviewRepository.findById(new ReviewId(new ClientEntity(clientId), new ProductEntity(productId)))
+    public void saveReviewImages(String reviewId, MultipartFile[] images) throws IOException {
+        ReviewEntity reviewEntity = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ReviewNotFoundException("Error: review with given id not found."));
 
         Set<FileEntity> reviewImages = new HashSet<>();
@@ -66,23 +65,10 @@ public class ReviewServiceImpl implements IReviewService {
                 reviewRepository.save(reviewEntity);
     }
 
-
     @Override
-    public void deleteReview(String clientId, String productId) {
-        boolean clientExists = clientRepository.existsById(clientId);
-        if (!clientExists)
-            throw new EntityNotFoundException(String.format("Client with id %s not found.", clientId));
-
-        boolean productExists = productRepository.existsById(productId);
-        if (!productExists)
-            throw new ProductNotFoundException(String.format("Product with id %s not found.", productId));
-
-        ReviewId reviewId = ReviewId.builder()
-                .client(new ClientEntity(clientId))
-                .product(new ProductEntity(productId)).build();
-
-        boolean exists = reviewRepository.existsById(reviewId);
-        if (!exists)
+    public void deleteReview(String reviewId) {
+        boolean reviewExists = reviewRepository.existsById(reviewId);
+        if (!reviewExists)
             throw new ReviewNotFoundException("Error: Review with given id not found.");
         else
             reviewRepository.deleteById(reviewId);
@@ -90,8 +76,8 @@ public class ReviewServiceImpl implements IReviewService {
 
     @Transactional
     @Override
-    public void deleteReviewImages(String clientId, String productId, String imageId) {
-        ReviewEntity reviewEntity = reviewRepository.findById(new ReviewId(new ClientEntity(clientId), new ProductEntity(productId)))
+    public void deleteReviewImages(String reviewId, String imageId) {
+        ReviewEntity reviewEntity = reviewRepository.findById(reviewId)
                 .orElseThrow(()-> new ReviewNotFoundException("Error: Review with given id not found."));
 
         FileEntity image = reviewEntity.getImages().stream()
@@ -105,13 +91,22 @@ public class ReviewServiceImpl implements IReviewService {
         fileService.deleteImageById(imageId);
     }
 
+    @Transactional
+    @Override
+    public ReviewViewDTO findReviewById(String reviewId) {
+        ReviewEntity reviewEntity = reviewRepository.findByReviewId(reviewId)
+                .orElseThrow(() -> new ReviewNotFoundException("Error: Review with given id not found."));
+
+        return reviewConverter.entityToViewDto(reviewEntity);
+    }
+
     private ReviewEntity buildEntity(ReviewRegisterDTO reviewRegisterDTO, MultipartFile[] images) {
-        ClientEntity client = findClientByUsername(reviewRegisterDTO.getUserId());
-        ProductEntity product = findProductById(reviewRegisterDTO.getProductId());
+        UserEntity userEntity = findUserByUsername(reviewRegisterDTO.getUser());
+        ProductEntity productEntity = findProductById(reviewRegisterDTO.getProduct());
 
         if (reviewRegisterDTO.getImages() == null)
             return reviewConverter
-                .reviewRegisterDtoToEntity(reviewRegisterDTO,product, client, null);
+                .reviewRegisterDtoToEntity(reviewRegisterDTO, userEntity, productEntity, null);
 
         // Todo: check if this must be isolated into other method or not.
         for (int i = 0; i < reviewRegisterDTO.getImages().length; i++) {
@@ -120,16 +115,17 @@ public class ReviewServiceImpl implements IReviewService {
         }
 
         return reviewConverter
-            .reviewRegisterDtoToEntity(reviewRegisterDTO,product, client, reviewRegisterDTO.getImages());
+            .reviewRegisterDtoToEntity(reviewRegisterDTO, userEntity, productEntity, reviewRegisterDTO.getImages());
     }
 
     private ProductEntity findProductById(String productId) {
         return productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException(String.format("Product with id %s not found.", productId)));
+                .orElseThrow(() -> new ProductNotFoundException(String.format("Error: Product with id %s not found.", productId)));
     }
 
-    private ClientEntity findClientByUsername(String username) {
-        return clientRepository.findByUserUsernameAndUserDeletedIsFalse(username)
-                .orElseThrow(() -> new ClientNotFoundException(String.format("Client with username %s not found.", username)));
+    private UserEntity findUserByUsername(String username) {
+        return userRepository.findByUsernameAndActiveIsTrue(username)
+                .orElseThrow(() -> new UserNotFoundException(String.format("Error: User with username %s not found.", username)));
     }
+
 }

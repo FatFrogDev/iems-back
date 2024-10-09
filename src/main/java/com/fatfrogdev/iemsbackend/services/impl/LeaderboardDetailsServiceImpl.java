@@ -4,24 +4,20 @@ import com.fatfrogdev.iemsbackend.converters.LeaderboardConverter;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardDetailsRegisterDTO;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardDetailsViewDTO;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardRegisterDTO;
-import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardViewDTO;
-import com.fatfrogdev.iemsbackend.domain.models.ClientEntity;
 import com.fatfrogdev.iemsbackend.domain.models.LeaderboardDetailsEntity;
 import com.fatfrogdev.iemsbackend.domain.models.LeaderboardEntity;
 import com.fatfrogdev.iemsbackend.domain.models.ProductEntity;
-import com.fatfrogdev.iemsbackend.domain.models.enumerates.SoundStageAmplitude;
+import com.fatfrogdev.iemsbackend.domain.models.UserEntity;
 import com.fatfrogdev.iemsbackend.exceptions.leaderboard.LeaderboardDetailsNotFoundException;
 import com.fatfrogdev.iemsbackend.exceptions.product.ProductNotFoundException;
 import com.fatfrogdev.iemsbackend.repositories.ILeaderboardDetailsRepository;
 import com.fatfrogdev.iemsbackend.repositories.ILeaderboardRepository;
 import com.fatfrogdev.iemsbackend.repositories.IProductRepository;
 import com.fatfrogdev.iemsbackend.services.ILeaderboardDetailsService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +32,6 @@ public class LeaderboardDetailsServiceImpl implements ILeaderboardDetailsService
     private final IProductRepository productRepository;
 
     private final LeaderboardConverter leaderboardConverter;
-
 
     @Override
     public void saveLeaderboardDetailsCollection(LeaderboardRegisterDTO leaderboardRegisterDTO, LeaderboardEntity leaderboardEntity){ // TODO: Add commit/rollback exception and other exceptions.
@@ -54,7 +49,7 @@ public class LeaderboardDetailsServiceImpl implements ILeaderboardDetailsService
                     mergeLeaderboardDetailsEntity(
                             leaderboardRegisterDTO.getLeaderboardDetails().get(index),
                             leaderboardEntity,
-                            leaderboardEntity.getClient(),
+                            leaderboardEntity.getUser(),
                             productEntity
                     )
             );
@@ -67,7 +62,7 @@ public class LeaderboardDetailsServiceImpl implements ILeaderboardDetailsService
     }
 
     @Override
-    public List<LeaderboardDetailsViewDTO> findById(String leaderboardId, String customOrder) {
+    public List<LeaderboardDetailsViewDTO> findByLeaderboardId(String leaderboardId, String customOrder) {
         customOrder = customOrder == null ? "asc" : customOrder; // TODO: validate word is "asc" or "desc" properly.
 
         Optional<LeaderboardEntity> optLeaderboardEntity = leaderboardRepository.findById(leaderboardId);
@@ -76,18 +71,19 @@ public class LeaderboardDetailsServiceImpl implements ILeaderboardDetailsService
             return  leaderboardConverter.ObjectListToLeaderboardDetailsViewDTO(
                     leaderboardRepository.findLeaderboardDetailsByIdAndOrder(leaderboardId, customOrder)
             );
-        } throw new LeaderboardDetailsNotFoundException(String.format("Error: Leaderboard details of leaderboard with id %s not found :(", leaderboardId));
+        } throw new LeaderboardDetailsNotFoundException(String.format("Error: Leaderboard details of leaderboard with id %s not found.", leaderboardId));
     }
 
-    private LeaderboardDetailsEntity mergeLeaderboardDetailsEntity(LeaderboardDetailsRegisterDTO leaderboardDetailsRegisterDTO, LeaderboardEntity leaderboardEntity, ClientEntity clientEntity, ProductEntity productEntity) {
-        return leaderboardConverter.DetailsRegisterDtoToDetailsEntity(leaderboardDetailsRegisterDTO, leaderboardEntity, clientEntity, productEntity);
+    private LeaderboardDetailsEntity mergeLeaderboardDetailsEntity(LeaderboardDetailsRegisterDTO leaderboardDetailsRegisterDTO, LeaderboardEntity leaderboardEntity, UserEntity userEntity, ProductEntity productEntity) {
+        return leaderboardConverter.DetailsRegisterDtoToDetailsEntity(leaderboardDetailsRegisterDTO, leaderboardEntity, userEntity, productEntity);
     }
 
     private ProductEntity findProductIdByProductNameAndProductBrand(String productName, String productBrand) {
         Optional<String> optProductId = productRepository.findProductIdByProductNameAndProductBrand(productName,productBrand);
         if (optProductId.isPresent())
-            return ProductEntity.builder().productId(optProductId.get()).build();
+            return new ProductEntity(optProductId.get());
         else
-            throw new ProductNotFoundException(String.format("Product with name %s and brand %s not found .", productName, productBrand));
+            throw new ProductNotFoundException(String.format("Product with name %s and brand %s not found.", productName, productBrand));
     }
+
 }

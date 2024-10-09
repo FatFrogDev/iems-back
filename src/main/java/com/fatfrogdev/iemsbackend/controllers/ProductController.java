@@ -1,7 +1,9 @@
 package com.fatfrogdev.iemsbackend.controllers;
 
 import com.fatfrogdev.iemsbackend.domain.DTOS.Product.ProductDTO;
+import com.fatfrogdev.iemsbackend.domain.models.CategoryEntity;
 import com.fatfrogdev.iemsbackend.domain.models.ProductEntity;
+import com.fatfrogdev.iemsbackend.services.ICategoryService;
 import com.fatfrogdev.iemsbackend.services.IProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,23 +19,42 @@ public class ProductController {
 
     private final IProductService productService;
 
-    @GetMapping("/all")
-    public ResponseEntity<List<ProductEntity>> findAl(){ // TODO: Add findAll function to the service with pagination.
-        return ResponseEntity.ok(null);
+    private final ICategoryService categoryService;
+
+    @PostMapping("/save")
+    public ResponseEntity<ProductDTO> saveProduct(@RequestBody ProductDTO productDTO){
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.save(productDTO));
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<ProductEntity>> findAllProducts(){ // TODO: Add findAll function to the service with pagination.
+        return ResponseEntity.ok(productService.findAll());
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<ProductEntity> findById(@PathVariable String productId){
+    public ResponseEntity<ProductEntity> findProductById(@PathVariable String productId){
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.findById(productId));
     }
 
     @GetMapping("") // products?id=... TODO: Redirect to the proper function according to the parameters given in the request.
-    public ResponseEntity<List<ProductEntity>> findByNameStartingWith(@RequestParam("startsWith") String prefix, @RequestParam String containing){
+    public ResponseEntity<List<ProductEntity>> findProductByNameStartingWith(@RequestParam("startsWith") String prefix, @RequestParam String containing){
         return ResponseEntity.ok(null);
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<ProductDTO> save(@RequestBody ProductDTO productDTO){
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.save(productDTO));
+    // Categories
+
+    @PostMapping("/categories/save")
+    public ResponseEntity<CategoryEntity> saveCategory(@RequestBody CategoryEntity categoryEntity){
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.save(categoryEntity));
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<String>> findAllCategories(){
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.findAll());
+    }
+
+    @GetMapping("/categories/{categoryName}")
+    public ResponseEntity<CategoryEntity> findCategoryByName(@PathVariable String categoryName){
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.findByName(categoryName));
     }
 }
