@@ -5,6 +5,7 @@ import com.fatfrogdev.iemsbackend.domain.DTOS.Client.UserRegisterDTO;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Client.UserViewDTO;
 import com.fatfrogdev.iemsbackend.domain.models.UserEntity;
 import com.fatfrogdev.iemsbackend.exceptions.WrongArgumentsException;
+import com.fatfrogdev.iemsbackend.exceptions.user.UserAlreadyExistsException;
 import com.fatfrogdev.iemsbackend.exceptions.user.UserIsActiveException;
 import com.fatfrogdev.iemsbackend.exceptions.user.UserNotFoundException;
 import com.fatfrogdev.iemsbackend.exceptions.user.UserIsInactiveException;
@@ -17,30 +18,40 @@ import java.util.Optional;
 
 @AllArgsConstructor
 @Service
-public class UserServiceImpl implements IUserService {
+public class UserServiceImpl implements IUserService { // TODO: Add update method.
 
     private final IUserRepository userRepository;
 
     private final UserConverter userConverter;
 
     @Override
-    public UserViewDTO save(UserRegisterDTO personDTO) { // TODO: Add validations for user already registered and deleted user. && update.
+    public UserViewDTO save(UserRegisterDTO personDTO) {
+        boolean userExistsByUsername = userRepository.existsByUsername(personDTO.getUsername());
+        if (userExistsByUsername)
+            throw new UserAlreadyExistsException("Username already exists");
+
+        boolean userExistsByEmail = userRepository.existsByEmail(personDTO.getEmail());
+        if (userExistsByEmail)
+            throw new UserAlreadyExistsException("Email already exists");
+
         UserEntity userEntity = userConverter.registerDtoToEntity(personDTO);
         return userConverter
                 .entityToViewDto(userRepository.save(userEntity));
     }
 
+    
     @Override
     public UserViewDTO findByUserUsername(String username) {
         if (username.length() < 3 || !username.matches("^[a-z0-9]*$"))
-            throw new WrongArgumentsException("Error: Username must be alphanumeric and have at least 3 characters");
+            throw new WrongArgumentsException("Username must be alphanumeric and must have at least 3 characters. Ex: valid: user112 not valid: usEr@)");
 
         Optional<UserEntity> optUserEntity = userRepository.findByUsernameAndActiveIsTrue(username);
-                if (optUserEntity.isPresent())
-                    return userConverter.entityToViewDto(optUserEntity.get());
-                else
-                    throw new UserNotFoundException(String.format("Error: User with %s username not found", username));
+        if (optUserEntity.isPresent())
+            return userConverter.entityToViewDto(optUserEntity.get());
+        else
+            throw new UserNotFoundException(String.format("User with username %s not found", username));
     }
+
 
     @Override
     public void activateOrDeactivateByUsername(String username, String action) {
@@ -53,13 +64,13 @@ public class UserServiceImpl implements IUserService {
             if (!userIsActive)
                 userRepository.activateByUserId(optUserEntity.getUserId());
             else
-                throw new UserIsActiveException("Error: User is already active");
+                throw new UserIsActiveException("User is already active");
         }
         if (action.equals("deactivate")) {
             if (userIsActive)
                 userRepository.deactivateByUserId(optUserEntity.getUserId());
             else
-                throw new UserIsInactiveException("Error: User was already inactivated.");
+                throw new UserIsInactiveException("User was already inactivated.");
         }
     }
 }

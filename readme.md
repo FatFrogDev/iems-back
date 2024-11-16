@@ -51,18 +51,7 @@ To use the API, you can send HTTP requests to the endpoints defined below.
 
 ### API Endpoints
 
-### Product Endpoints
-
-- **GET /products/all**: Retrieve all products.
-- **GET /products/{productId}**: Retrieve a product by its ID.
-
-
-### Review Endpoints
-
-- **POST /reviews/save**: Save a new review without images.
-- **POST /reviews/images/upload**: Upload images for a review.
-- **DELETE /reviews**: Delete a review.
-- **DELETE /reviews/images/{imageId}**: Delete a review image.
+Check docs at: http://{{app-url}}/swagger-ui/index.html#/
 
 ## Contributing
 

@@ -1,9 +1,10 @@
 package com.fatfrogdev.iemsbackend.services.impl;
 
 import com.fatfrogdev.iemsbackend.domain.models.CategoryEntity;
+import com.fatfrogdev.iemsbackend.exceptions.product.CategoryAlreadyExistsException;
+import com.fatfrogdev.iemsbackend.exceptions.product.CategoryNotFoundException;
 import com.fatfrogdev.iemsbackend.repositories.ICategoryRepository;
 import com.fatfrogdev.iemsbackend.services.ICategoryService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +17,14 @@ public class CategoryServiceImpl implements ICategoryService {
     private final ICategoryRepository categoryRepository;
 
     @Override
-    public CategoryEntity save(CategoryEntity categoryEntity){ // ToDo: Add RegExp validators. CATEGORY  OR CA-TE-GO-RY SHOULD BE VALID
+    public CategoryEntity save(CategoryEntity categoryEntity){
+        categoryEntity.setCategoryName(this.formatCategoryName(categoryEntity.getCategoryName()));
+
+        boolean categoryExists = categoryRepository.existsByCategoryName(categoryEntity.getCategoryName());
+
+        if(categoryExists)
+            throw new CategoryAlreadyExistsException(String.format("Category with name %s already exists.", categoryEntity.getCategoryName()));
+        
         return categoryRepository.save(categoryEntity);
     }
 
@@ -27,7 +35,14 @@ public class CategoryServiceImpl implements ICategoryService {
 
     @Override
     public CategoryEntity findByName(String categoryName) {
-        return categoryRepository.findByCategoryName(categoryName)
-                .orElseThrow(()->new EntityNotFoundException(String.format("Category with name %s not found.", categoryName)));
+        return categoryRepository.findByCategoryName(this.formatCategoryName(categoryName))
+                .orElseThrow(()->new CategoryNotFoundException(String.format("Category with name %s not found.", categoryName)));
+    }
+
+    @Override
+    public String formatCategoryName(String categoryName){
+        return categoryName
+        .strip().toLowerCase()
+        .replace("", "-");
     }
 }

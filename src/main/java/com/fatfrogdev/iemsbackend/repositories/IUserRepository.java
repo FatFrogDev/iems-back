@@ -33,4 +33,8 @@ public interface IUserRepository extends JpaRepository<UserEntity, String> {
     Optional<UserEntity> findByUsername(String username);
 
     Optional<UserEntity> findByUsernameAndActiveIsTrue(String username);
+
+    boolean existsByUsername(String username);
+
+    boolean existsByEmail(String email);
 }

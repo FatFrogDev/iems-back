@@ -2,6 +2,7 @@ package com.fatfrogdev.iemsbackend.services.impl;
 
 import com.fatfrogdev.iemsbackend.domain.models.BrandEntity;
 import com.fatfrogdev.iemsbackend.exceptions.WrongArgumentsException;
+import com.fatfrogdev.iemsbackend.exceptions.brand.BrandAlreadyExistsException;
 import com.fatfrogdev.iemsbackend.exceptions.brand.BrandNotFoundException;
 import com.fatfrogdev.iemsbackend.repositories.IBrandRepository;
 import com.fatfrogdev.iemsbackend.services.IBrandService;
@@ -19,6 +20,13 @@ public class BrandServiceImpl implements IBrandService {
 
     @Override
     public BrandEntity save(BrandEntity brandEntity) {
+        brandEntity.setBrandId(brandEntity.getBrandId().toLowerCase());
+        brandEntity.setFilialOwner(brandEntity.getFilialOwner().toLowerCase()); 
+        boolean brandExistsById = brandRepository.existsById(brandEntity.getBrandId());
+        
+        if (brandExistsById) 
+            throw new BrandAlreadyExistsException(String.format("Brand with id %s already exists", brandEntity.getBrandId()));
+        
         return brandRepository.save(brandEntity);
     }
 
@@ -31,20 +39,20 @@ public class BrandServiceImpl implements IBrandService {
 
     @Override
     public BrandEntity findById(String brandId) {
-        return brandRepository.findById(brandId)
-                .orElseThrow(() -> new BrandNotFoundException(String.format("Error: Brand with id %s not found", brandId)));
+        return brandRepository.findById(brandId.toLowerCase())
+                .orElseThrow(() -> new BrandNotFoundException(String.format("Brand with id %s not found", brandId)));
     }
 
     @Override
     public List<BrandEntity> findByParam(String startsWith, String contains, String filialOwner) {
-        if (startsWith != null) {
-            return findByBrandIdStartsWith(startsWith);
-        } else if (contains != null) {
-            return findByBrandIdContaining(contains);
-        } else if (filialOwner != null) {
-            return brandRepository.findByFilialOwner(filialOwner);
-        } else
-            throw new WrongArgumentsException("Error: No valid parameters passed");
+        if (startsWith != null) 
+            return this.findByBrandIdStartsWith(startsWith);
+        else if (contains != null)
+            return this.findByBrandIdContaining(contains);
+        else if (filialOwner != null)
+            return this.findByFilialOwner(filialOwner);
+        else
+            throw new WrongArgumentsException("No valid parameters were passed");
     }
 
     private List<BrandEntity> findByBrandIdStartsWith(String prefix) {

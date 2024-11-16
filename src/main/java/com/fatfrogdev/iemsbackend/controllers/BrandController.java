@@ -18,7 +18,7 @@ public class BrandController {
     private final IBrandService brandService;
 
     @PostMapping("/save")
-    public ResponseEntity<BrandEntity> save(@RequestBody BrandEntity brandEntity) { // TODO: Add lower case when saving.
+    public ResponseEntity<BrandEntity> save(@RequestBody BrandEntity brandEntity) {
         return ResponseEntity.status(HttpStatus.CREATED).body(brandService.save(brandEntity));
     }
 

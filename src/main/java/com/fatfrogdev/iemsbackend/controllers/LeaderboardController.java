@@ -2,7 +2,6 @@ package com.fatfrogdev.iemsbackend.controllers;
 
 import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardRegisterDTO;
 import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardViewDTO;
-import com.fatfrogdev.iemsbackend.services.ILeaderboardDetailsService;
 import com.fatfrogdev.iemsbackend.services.ILeaderboardService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 public class LeaderboardController {
 
     private final ILeaderboardService leaderboardService;
-
-    private final ILeaderboardDetailsService leaderboardDetailsService;
 
     @PostMapping("/save")
     public ResponseEntity<LeaderboardViewDTO> save(@RequestBody LeaderboardRegisterDTO leaderboardRegisterDTO) {

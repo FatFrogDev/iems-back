@@ -20,13 +20,19 @@ import com.fatfrogdev.iemsbackend.exceptions.user.UserAlreadyExistsException;
 import com.fatfrogdev.iemsbackend.exceptions.user.UserIsActiveException;
 import com.fatfrogdev.iemsbackend.exceptions.user.UserNotFoundException;
 import com.fatfrogdev.iemsbackend.exceptions.user.UserIsInactiveException;
+import jakarta.validation.ConstraintViolation;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ExceptionHandlerController {
@@ -160,4 +166,38 @@ public class ExceptionHandlerController {
         ErrorObjectDto errorObject = new ErrorObjectDto(date, HttpStatus.BAD_REQUEST, e.getClass().getSimpleName(), e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorObject);
     }
+
+    // Validation exceptions
+
+    @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
+    public ResponseEntity<Map<String, String>> handleConstraintViolationException(jakarta.validation.ConstraintViolationException ex) {
+        // Gets all the constraint violations
+        Set<ConstraintViolation<?>> validationErrors = ex.getConstraintViolations();
+
+        // Converts the violations to a map
+        Map<String, String> mapErrors = validationErrors.stream()
+                .collect(Collectors.toMap(
+                        violation -> violation.getPropertyPath().toString(),
+                        ConstraintViolation::getMessage
+                ));
+        return new ResponseEntity<>(mapErrors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(org.hibernate.exception.ConstraintViolationException.class)
+    public ResponseEntity<ErrorObjectDto> handleConstraintViolationException(org.hibernate.exception.ConstraintViolationException ex) {
+        ErrorObjectDto errorObject = new ErrorObjectDto(date, HttpStatus.BAD_REQUEST,ex.getClass().getSimpleName(), this.formatSQLConstraintViolation(ex.getErrorMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorObject);
+    }
+
+    /**
+     * Formats the SQL Constraint Violation Exception. Replaces the "Detail:" string and removes the brackets.
+     * Used to format the error message of the ConstraintViolationException and avoid showing explicit SQL errors.
+     * @param errorString
+     * @return String
+     * */
+    private String formatSQLConstraintViolation(String errorString){
+        return errorString.split("Detail:", 2)[1]
+                .trim()
+                .replaceAll("[\\[\\]()]", "");
+    };
 }

@@ -1,8 +1,5 @@
 package com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard;
 
-
-import com.fatfrogdev.iemsbackend.domain.models.enumerates.ImagePrecision;
-import com.fatfrogdev.iemsbackend.domain.models.enumerates.SoundStageAmplitude;
 import lombok.*;
 
 

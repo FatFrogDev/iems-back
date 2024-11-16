@@ -26,7 +26,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.findByUserUsername(username));
     }
 
-    @PatchMapping("/{username}") // TODO: Redirect to the proper function according to the parameters given in the request.
+    @PatchMapping("/{username}")
     public ResponseEntity<UserViewDTO> deactivateByUsername(@PathVariable("username") String username, @RequestParam("action") String action){
         userService.activateOrDeactivateByUsername(username, action);
         return ResponseEntity.status(HttpStatus.OK).build();

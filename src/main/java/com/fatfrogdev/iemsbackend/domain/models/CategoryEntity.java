@@ -14,12 +14,16 @@ import lombok.*;
 @Table(name = "categories")
 public class CategoryEntity {
 
-        @Id
-        @NotBlank(message = "Category name is required.")
-        @Column(nullable = false, length = 45)
-        private String categoryName;
+    @Id
+    @NotBlank(message = "Category name is required.")
+    @Column(nullable = false, length = 45)
+    private String categoryName;
 
-        @Column(length = 250)
-        @Size(max = 250)
-        private String description;
+    @Column(length = 250)
+    @Size(max = 250)
+    private String description;
+
+    public CategoryEntity(String categoryName) {
+        this.categoryName = categoryName;
+    }
 }

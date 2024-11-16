@@ -1,9 +1,8 @@
 package com.fatfrogdev.iemsbackend.domain.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.*;
-import org.springframework.context.annotation.Conditional;
+
 
 @Data
 @Getter
@@ -19,4 +18,8 @@ public class BrandEntity {
 
     @Column(length = 45)
     private String filialOwner;
+
+    public BrandEntity(String brandId) {
+        this.brandId = brandId;
+    }
 }

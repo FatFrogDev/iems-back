@@ -16,5 +16,4 @@ public class ErrorObjectDto {
     private HttpStatus code;
     private String exception;
     private String message;
-
 }

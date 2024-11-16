@@ -14,5 +14,5 @@ public interface IProductService {
 
     List<ProductEntity> findByNameContaining(String containing);
 
-    List<ProductEntity> findAll();
+    List<ProductEntity> findAll(Integer page, Integer size);
 }

@@ -6,6 +6,7 @@ import com.fatfrogdev.iemsbackend.domain.DTOS.Leaderboard.LeaderboardViewDTO;
 import com.fatfrogdev.iemsbackend.domain.models.LeaderboardEntity;
 import com.fatfrogdev.iemsbackend.domain.models.UserEntity;
 import com.fatfrogdev.iemsbackend.exceptions.user.UserNotFoundException;
+import com.fatfrogdev.iemsbackend.exceptions.WrongArgumentsException;
 import com.fatfrogdev.iemsbackend.exceptions.leaderboard.LeaderboardNotFoundException;
 import com.fatfrogdev.iemsbackend.repositories.ILeaderboardRepository;
 import com.fatfrogdev.iemsbackend.repositories.IUserRepository;
@@ -29,14 +30,16 @@ public class LeaderboardServiceImpl implements ILeaderboardService {
 
     @Override
     public LeaderboardViewDTO saveLeaderboard(LeaderboardRegisterDTO leaderboardRegisterDTO) {
-        LeaderboardEntity leaderboardEntity = saveLeaderboardEntity(leaderboardRegisterDTO);
+        LeaderboardEntity leaderboardEntity = this.saveLeaderboardEntity(leaderboardRegisterDTO);
         leaderboardDetailsService.saveLeaderboardDetailsCollection(leaderboardRegisterDTO, leaderboardEntity);
         return findById(leaderboardEntity.getLeaderboardId(), null);
     }
 
     @Override
-    public LeaderboardViewDTO findById(String LeaderboardId, String order) { // TODO: Check if both exists
-        order = order == null ? "asc" : order; // TODO: validate word is "asc" or "desc" properly. // TODO: validate word is "asc" or "desc" properly.
+    public LeaderboardViewDTO findById(String LeaderboardId, String order) { 
+        if (!order.equals("asc") && !order.equals("desc")) 
+            throw new WrongArgumentsException(order + " Is not a valid order. Use 'asc' or 'desc'.");
+
         boolean leaderboardExists = leaderboardRepository.existsById(LeaderboardId);
         
         if (!leaderboardExists)
@@ -44,18 +47,18 @@ public class LeaderboardServiceImpl implements ILeaderboardService {
 
         LeaderboardEntity leaderboardEntity = leaderboardRepository.findById(LeaderboardId)
                 .orElseThrow(() -> new LeaderboardNotFoundException(String.format("Leaderboard with id %s not found", LeaderboardId)));
-
-            return LeaderboardViewDTO.builder()
-                    .leaderboardId(LeaderboardId)
-                    .leaderboardName(leaderboardEntity.getName())
-                    .userUsername(leaderboardEntity.getUser().getUsername())
-                    .leaderboardDetails(
-                            leaderboardDetailsService.findByLeaderboardId(LeaderboardId, order)
-                    ).build();
+        
+        return LeaderboardViewDTO.builder()
+            .leaderboardId(LeaderboardId)
+            .leaderboardName(leaderboardEntity.getName())
+            .userUsername(leaderboardEntity.getUser().getUsername())
+            .leaderboardDetails(
+                leaderboardDetailsService.findByLeaderboardId(LeaderboardId, order))
+            .build();
     }
 
 
-    private LeaderboardEntity saveLeaderboardEntity(LeaderboardRegisterDTO leaderboardRegisterDTO) { //TODO? Refactor to add personalized exception
+    private LeaderboardEntity saveLeaderboardEntity(LeaderboardRegisterDTO leaderboardRegisterDTO) {
         UserEntity userEntity = userRepository.findByUsernameAndActiveIsTrue(leaderboardRegisterDTO.getUser())
                 .orElseThrow(()-> new UserNotFoundException(String.format("User with username %s not found.", leaderboardRegisterDTO.getUser())));
 

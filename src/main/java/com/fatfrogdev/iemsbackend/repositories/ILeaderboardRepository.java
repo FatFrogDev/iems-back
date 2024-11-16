@@ -19,10 +19,10 @@ public interface ILeaderboardRepository extends JpaRepository<LeaderboardEntity,
             "INNER JOIN LeaderboardEntity lbd ON lbd_dtls.leaderboard.leaderboardId = lbd.leaderboardId " +
             "INNER JOIN ProductEntity product ON lbd_dtls.product.productId = product.productId " +
             "WHERE lbd_dtls.leaderboard.leaderboardId = :in_leaderboard_id " +
-            "ORDER BY CASE "+
-            "WHEN :in_custom_order = 'asc' THEN lbd_dtls.productTop " +
-            "END ASC, "+
-            "CASE WHEN :in_custom_order = 'desc' THEN lbd_dtls.productTop " +
+            "ORDER BY CASE  WHEN :in_custom_order = 'asc' " +
+            "THEN lbd_dtls.productTop " +
+            "END ASC, CASE WHEN :in_custom_order = 'desc'" +
+            "THEN lbd_dtls.productTop " +
             "END DESC")
     List<Object[]> findLeaderboardDetailsByIdAndOrder(
             @Param("in_leaderboard_id") String leaderboardId,

@@ -1,9 +1,9 @@
 package com.fatfrogdev.iemsbackend.domain.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -13,11 +13,11 @@ import org.hibernate.annotations.UuidGenerator;
 @Builder
 @Getter
 @Setter
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Table(name = "products")
-public class ProductEntity { // TODO Add category entity?
+public class ProductEntity {
 
     @Id
     @UuidGenerator
@@ -33,11 +33,13 @@ public class ProductEntity { // TODO Add category entity?
 
     private String website;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "filialOwner"})
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id", referencedColumnName = "brandId")
     private BrandEntity brand;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "description"})
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "category_name", referencedColumnName = "categoryName")
     private CategoryEntity category;
 

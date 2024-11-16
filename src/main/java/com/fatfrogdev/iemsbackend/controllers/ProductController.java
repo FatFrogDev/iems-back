@@ -26,9 +26,10 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.save(productDTO));
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<ProductEntity>> findAllProducts(){ // TODO: Add findAll function to the service with pagination.
-        return ResponseEntity.ok(productService.findAll());
+    @GetMapping("/all")
+    public ResponseEntity<List<ProductEntity>> findAllProducts(@RequestParam(value = "page", required = false) Integer page,
+                                                               @RequestParam(value = "size", required = false) Integer size){
+        return ResponseEntity.ok(productService.findAll(page, size));
     }
 
     @GetMapping("/{productId}")

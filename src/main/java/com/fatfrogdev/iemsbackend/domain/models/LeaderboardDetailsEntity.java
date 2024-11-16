@@ -1,7 +1,5 @@
 package com.fatfrogdev.iemsbackend.domain.models;
 
-import com.fatfrogdev.iemsbackend.domain.models.enumerates.ImagePrecision;
-import com.fatfrogdev.iemsbackend.domain.models.enumerates.SoundStageAmplitude;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
@@ -20,11 +18,11 @@ public class LeaderboardDetailsEntity {
     @UuidGenerator
     private String LeaderboardDetailsId;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "leaderboard_id", nullable = false)
     private LeaderboardEntity leaderboard;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private ProductEntity product;
 

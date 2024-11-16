@@ -11,4 +11,6 @@ public interface ICategoryService {
     List<String> findAll();
 
     CategoryEntity findByName(String categoryName);
+
+    String formatCategoryName (String categoryName);
 }

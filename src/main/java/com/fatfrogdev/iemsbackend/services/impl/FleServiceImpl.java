@@ -17,7 +17,7 @@ public class FleServiceImpl implements IFileService {
 
     private static final long MAX_IMAGE_SIZE = 7 * 1024 * 1024; // Equals to 10MB
 
-    private static  final String[] VALID_FILE_EXTENSIONS = {"jpg", "jpeg", "pdf"};
+    private static  final String[] DEFAULT_VALID_FILE_EXTENSIONS = {"jpg", "jpeg", "pdf"};
 
     @Override
     public byte[] findImageById(String fileId) {
@@ -43,7 +43,7 @@ public class FleServiceImpl implements IFileService {
      * */
     @Override
     public boolean hasValidImageExtension(String fileName, String... validExtensions) {
-        validExtensions = validExtensions == null ? VALID_FILE_EXTENSIONS : validExtensions;
+        validExtensions = validExtensions == null ? DEFAULT_VALID_FILE_EXTENSIONS : validExtensions;
         if (fileName != null) {
             // Check the last point index which is usually the extension separator. Also, checks that last point index found is valid.
             int lastPointIndex = fileName.lastIndexOf(".");

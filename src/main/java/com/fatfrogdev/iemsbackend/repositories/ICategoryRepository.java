@@ -13,4 +13,6 @@ public interface ICategoryRepository extends JpaRepository<CategoryEntity, Strin
 
     @Query("select c.categoryName from CategoryEntity c")
     List<String> findAllCategoriesNames();
+
+    boolean existsByCategoryName(String categoryName);
 }

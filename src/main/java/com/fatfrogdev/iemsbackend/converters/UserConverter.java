@@ -15,7 +15,9 @@ import static com.fatfrogdev.iemsbackend.converters.BaseConverter.baseMapper;
 public class UserConverter {
     public UserEntity registerDtoToEntity(UserRegisterDTO personDTO) {
         try {
-            return baseMapper().map(personDTO, UserEntity.class);
+            UserEntity userEntity = baseMapper().map(personDTO, UserEntity.class);
+            userEntity.setUsername(personDTO.getUsername().toLowerCase());
+            return userEntity;
         } catch (Exception e) {
             e.getStackTrace();
             return null;

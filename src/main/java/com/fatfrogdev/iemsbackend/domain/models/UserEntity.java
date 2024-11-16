@@ -43,7 +43,7 @@ public class UserEntity {
 
     private Integer age; // TODO : ADD validation
 
-    @Column(nullable = false, columnDefinition = "boolean not null default false")
+    @Column(nullable = false, columnDefinition = "boolean not null default true")
     private boolean active;
 
 

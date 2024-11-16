@@ -8,6 +8,7 @@ import com.fatfrogdev.iemsbackend.domain.models.LeaderboardDetailsEntity;
 import com.fatfrogdev.iemsbackend.domain.models.LeaderboardEntity;
 import com.fatfrogdev.iemsbackend.domain.models.ProductEntity;
 import com.fatfrogdev.iemsbackend.domain.models.UserEntity;
+import com.fatfrogdev.iemsbackend.exceptions.WrongArgumentsException;
 import com.fatfrogdev.iemsbackend.exceptions.leaderboard.LeaderboardDetailsNotFoundException;
 import com.fatfrogdev.iemsbackend.exceptions.product.ProductNotFoundException;
 import com.fatfrogdev.iemsbackend.repositories.ILeaderboardDetailsRepository;
@@ -40,13 +41,13 @@ public class LeaderboardDetailsServiceImpl implements ILeaderboardDetailsService
 
         for (int index = 0; index < leaderboardRegisterDTO.getLeaderboardDetails().size(); index++) {
 
-            ProductEntity productEntity = findProductIdByProductNameAndProductBrand(
+            ProductEntity productEntity = this.findProductIdByProductNameAndProductBrand(
                     leaderboardRegisterDTO.getLeaderboardDetails().get(index).getProduct(),
                     leaderboardRegisterDTO.getLeaderboardDetails().get(index).getBrand()
             );
 
             leaderboardDetailsEntityList.add(
-                    mergeLeaderboardDetailsEntity(
+                    this.mergeLeaderboardDetailsEntity(
                             leaderboardRegisterDTO.getLeaderboardDetails().get(index),
                             leaderboardEntity,
                             leaderboardEntity.getUser(),
@@ -63,7 +64,8 @@ public class LeaderboardDetailsServiceImpl implements ILeaderboardDetailsService
 
     @Override
     public List<LeaderboardDetailsViewDTO> findByLeaderboardId(String leaderboardId, String customOrder) {
-        customOrder = customOrder == null ? "asc" : customOrder; // TODO: validate word is "asc" or "desc" properly.
+        if (!customOrder.equals("asc") && !customOrder.equals("desc"))
+            throw new WrongArgumentsException(String.format("Error: Order %s is not valid. Use 'asc' or 'desc'.", customOrder));
 
         Optional<LeaderboardEntity> optLeaderboardEntity = leaderboardRepository.findById(leaderboardId);
 
