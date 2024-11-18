@@ -8,5 +8,5 @@ public interface ILeaderboardService {
 
     LeaderboardViewDTO saveLeaderboard(LeaderboardRegisterDTO leaderboardRegisterDTO);
 
-    LeaderboardViewDTO findById(String LeaderboardId, String order);
+    LeaderboardViewDTO findLeaderboardById(String LeaderboardId, String order);
 }

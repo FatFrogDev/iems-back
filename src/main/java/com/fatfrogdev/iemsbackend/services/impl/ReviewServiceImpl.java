@@ -44,6 +44,7 @@ public class ReviewServiceImpl implements IReviewService {
             );
     }
 
+    
     @Override
     public void saveReviewImages(String reviewId, MultipartFile[] images) throws IOException {
         ReviewEntity reviewEntity = reviewRepository.findById(reviewId)
@@ -65,15 +66,17 @@ public class ReviewServiceImpl implements IReviewService {
         reviewRepository.save(reviewEntity);
     }
 
+    
     @Override
     public void deleteReview(String reviewId) {
         boolean reviewExists = reviewRepository.existsById(reviewId);
         if (!reviewExists)
-            throw new ReviewNotFoundException("Error: Review with given id not found.");
+            throw new ReviewNotFoundException(String.format("Review with id %s not found.", reviewId));
         else
             reviewRepository.deleteById(reviewId);
     }
 
+    
     @Transactional
     @Override
     public void deleteReviewImages(String reviewId, String imageId) {
@@ -88,7 +91,7 @@ public class ReviewServiceImpl implements IReviewService {
         reviewEntity.getImages().remove(imageToDelete);
         reviewRepository.save(reviewEntity);
 
-        fileService.deleteImageById(imageId);
+        fileService.deleteFileById(imageId, "image");
     }
 
     @Transactional

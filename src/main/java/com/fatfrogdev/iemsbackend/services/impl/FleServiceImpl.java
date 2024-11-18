@@ -22,17 +22,24 @@ public class FleServiceImpl implements IFileService {
     @Override
     public byte[] findImageById(String fileId) {
         FileEntity fileEntity = fileRepository.findImageDataByFileIdAndTypeStartsWith(fileId, "image/")
-                .orElseThrow(() -> new FileNotFoundException(String.format("Error: Image with id %s not found or it is not marked as image", fileId)));
+                .orElseThrow(() -> new FileNotFoundException(String.format("Image with id %s not found or it is not marked as image", fileId)));
         return fileEntity.getData();
     }
 
     @Override
-    public void deleteImageById(String fileId) {
-        boolean imageExists = fileRepository.existsByFileIdAndTypeStartsWith(fileId, "image/");
+    public void deleteFileById(String fileId, String fileType) {
+        boolean imageExists = fileRepository.existsByFileIdAndTypeStartsWith(fileId, fileType+"/");
         if (!imageExists)
-            throw new FileNotFoundException(String.format("Error: Image with id %s not found or it is not marked as image.", fileId));
+            throw new FileNotFoundException(String.format("File with id %s not found or it is not marked as image.", fileId));
         else
             fileRepository.deleteById(fileId);
+    }
+
+    @Override
+    public byte[] findDocumentById(String fileId, String fileType) {
+        FileEntity fileEntity = fileRepository.findImageDataByFileIdAndTypeStartsWith(fileId, fileType)
+            .orElseThrow(() -> new FileNotFoundException(String.format("Document with id %s not found or it is not marked as image", fileId)));
+        return fileEntity.getData();
     }
 
     /**

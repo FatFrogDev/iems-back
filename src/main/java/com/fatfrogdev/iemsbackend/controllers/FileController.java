@@ -21,12 +21,18 @@ public class FileController {
 
     @GetMapping(value = "/documents/{fileId}", produces = {MediaType.APPLICATION_PDF_VALUE})
     public ResponseEntity<byte[]> findDocumentById(@PathVariable String fileId){
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(fileService.findDocumentById(fileId, "pdf"));
     }
 
     @DeleteMapping("/images/{fileId}")
     public ResponseEntity<Void> deleteImageById(@PathVariable String fileId){
-        fileService.deleteImageById(fileId);
+        fileService.deleteFileById(fileId, "image");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @DeleteMapping("/images/{fileId}")
+    public ResponseEntity<Void> deleteDocumentById(@PathVariable String fileId){
+        fileService.deleteFileById(fileId, "pdf");
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

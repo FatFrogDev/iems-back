@@ -28,11 +28,11 @@ public class UserServiceImpl implements IUserService { // TODO: Add update metho
     public UserViewDTO save(UserRegisterDTO personDTO) {
         boolean userExistsByUsername = userRepository.existsByUsername(personDTO.getUsername());
         if (userExistsByUsername)
-            throw new UserAlreadyExistsException("Username already exists");
+            throw new UserAlreadyExistsException("Username already exists.");
 
         boolean userExistsByEmail = userRepository.existsByEmail(personDTO.getEmail());
         if (userExistsByEmail)
-            throw new UserAlreadyExistsException("Email already exists");
+            throw new UserAlreadyExistsException("Email given is already linked to an account.");
 
         UserEntity userEntity = userConverter.registerDtoToEntity(personDTO);
         return userConverter

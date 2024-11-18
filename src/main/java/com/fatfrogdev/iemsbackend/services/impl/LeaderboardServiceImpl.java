@@ -32,11 +32,11 @@ public class LeaderboardServiceImpl implements ILeaderboardService {
     public LeaderboardViewDTO saveLeaderboard(LeaderboardRegisterDTO leaderboardRegisterDTO) {
         LeaderboardEntity leaderboardEntity = this.saveLeaderboardEntity(leaderboardRegisterDTO);
         leaderboardDetailsService.saveLeaderboardDetailsCollection(leaderboardRegisterDTO, leaderboardEntity);
-        return findById(leaderboardEntity.getLeaderboardId(), null);
+        return this.findLeaderboardById(leaderboardEntity.getLeaderboardId(), "asc");
     }
 
     @Override
-    public LeaderboardViewDTO findById(String LeaderboardId, String order) { 
+    public LeaderboardViewDTO findLeaderboardById(String LeaderboardId, String order) {
         if (!order.equals("asc") && !order.equals("desc")) 
             throw new WrongArgumentsException(order + " Is not a valid order. Use 'asc' or 'desc'.");
 

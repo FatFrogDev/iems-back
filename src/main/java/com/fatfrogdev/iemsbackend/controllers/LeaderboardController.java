@@ -24,7 +24,7 @@ public class LeaderboardController {
 
     @GetMapping("/{leaderboardId}/details")
     public ResponseEntity<LeaderboardViewDTO> findById(@PathVariable String leaderboardId, @RequestParam(value = "order", required = false) String order){
-        return ResponseEntity.status(HttpStatus.OK).body(leaderboardService.findById(leaderboardId, order));
+        return ResponseEntity.status(HttpStatus.OK).body(leaderboardService.findLeaderboardById(leaderboardId, order));
     }
 
 

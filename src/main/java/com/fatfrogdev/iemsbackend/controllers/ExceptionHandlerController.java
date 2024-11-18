@@ -180,7 +180,7 @@ public class ExceptionHandlerController {
                         violation -> violation.getPropertyPath().toString(),
                         ConstraintViolation::getMessage
                 ));
-        return new ResponseEntity<>(mapErrors, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapErrors);
     }
 
     @ExceptionHandler(org.hibernate.exception.ConstraintViolationException.class)
@@ -192,8 +192,8 @@ public class ExceptionHandlerController {
     /**
      * Formats the SQL Constraint Violation Exception. Replaces the "Detail:" string and removes the brackets.
      * Used to format the error message of the ConstraintViolationException and avoid showing explicit SQL errors.
-     * @param errorString
-     * @return String
+     * @param errorString String to be formatted.
+     * @return formatted error message.
      * */
     private String formatSQLConstraintViolation(String errorString){
         return errorString.split("Detail:", 2)[1]
