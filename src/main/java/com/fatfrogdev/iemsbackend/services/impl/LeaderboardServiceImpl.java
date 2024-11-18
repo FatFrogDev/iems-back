@@ -12,6 +12,7 @@ import com.fatfrogdev.iemsbackend.repositories.ILeaderboardRepository;
 import com.fatfrogdev.iemsbackend.repositories.IUserRepository;
 import com.fatfrogdev.iemsbackend.services.ILeaderboardDetailsService;
 import com.fatfrogdev.iemsbackend.services.ILeaderboardService;
+import com.fatfrogdev.iemsbackend.validators.LeaderboardValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,9 +28,13 @@ public class LeaderboardServiceImpl implements ILeaderboardService {
     private final LeaderboardConverter leaderboardConverter;
 
     private final IUserRepository userRepository;
-
+    
+    private final LeaderboardValidator leaderboardValidator;
+    
     @Override
     public LeaderboardViewDTO saveLeaderboard(LeaderboardRegisterDTO leaderboardRegisterDTO) {
+        leaderboardValidator.validateLeaderboardDetailsList(leaderboardRegisterDTO.getLeaderboardDetails()); 
+            
         LeaderboardEntity leaderboardEntity = this.saveLeaderboardEntity(leaderboardRegisterDTO);
         leaderboardDetailsService.saveLeaderboardDetailsCollection(leaderboardRegisterDTO, leaderboardEntity);
         return this.findLeaderboardById(leaderboardEntity.getLeaderboardId(), "asc");
